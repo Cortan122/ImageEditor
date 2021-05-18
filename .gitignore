@@ -1,0 +1,8 @@
+*.exe
+*.o
+.vscode
+main
+resources.c
+resources.h
+stretchy_buffer.h
+demo.zip
