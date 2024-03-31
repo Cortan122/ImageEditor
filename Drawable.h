@@ -1,5 +1,5 @@
 #pragma once
-#include <raymath.h>
+#include <raylib.h>
 
 #define DRAWABLE(self, type)                                       \
   (Drawable) {                                                     \

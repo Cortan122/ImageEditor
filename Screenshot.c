@@ -241,7 +241,7 @@ void Screenshot$begin(Screenshot* cm) {
 
 bool Screenshot$end(Screenshot* cm, char* name) {
   EndTextureMode();
-  Image img = GetTextureData(cm->renderTexture.texture);
+  Image img = LoadImageFromTexture(cm->renderTexture.texture);
   ImageFlipVertical(&img);
 
   bool res;

@@ -1,6 +1,8 @@
 #include "Canvas.h"
 
 #include <math.h>
+#include <raylib.h>
+#include <raymath.h>
 
 #include "CropRectangle.h"
 #include "DrawableLine.h"
@@ -81,7 +83,7 @@ void Canvas$reload(Canvas* c, bool checkClipboard) {
 
   c->texture = c->screenshot.texture;
   SetTextureFilter(c->texture,
-                   c->nearestNeighborToggle ? FILTER_BILINEAR : FILTER_POINT);
+                   c->nearestNeighborToggle ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
   Canvas$updateSize(c);
   Canvas$rescale(c);
 }
@@ -140,7 +142,7 @@ void Canvas$keyboardShortcuts(Canvas* c) {
   if (!isctrl && IsKeyTyped(KEY_P)) {
     c->nearestNeighborToggle = !c->nearestNeighborToggle;
     SetTextureFilter(c->texture,
-                     c->nearestNeighborToggle ? FILTER_BILINEAR : FILTER_POINT);
+                     c->nearestNeighborToggle ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
   }
 
   if (IsKeyTyped(KEY_L)) Canvas$takeScreenshot(c);
@@ -207,11 +209,11 @@ void Canvas$Update(Canvas* c) {
     if (IsKeyTyped(KEY_B)) Canvas$addDrawable(c, CropRectangle$New(NULL));
 
     int count;
-    char** file = GetDroppedFiles(&count);
-    for (int i = 0; i < count; i++) {
-      Canvas$addDrawable(c, FloatingImage$New(file[i]));
+    FilePathList files = LoadDroppedFiles();
+    for (int i = 0; i < files.count; i++) {
+      Canvas$addDrawable(c, FloatingImage$New(files.paths[i]));
     }
-    ClearDroppedFiles();
+    UnloadDroppedFiles(files);
 
     Canvas$keyboardShortcuts(c);
   }
@@ -224,6 +226,16 @@ void Canvas$Update(Canvas* c) {
   if (IsKeyTyped(KEY_PAGE_DOWN)) Canvas$zoom(c, -1);
 
   c->prevMousePos = GetMousePosition();
+}
+
+// from: https://github.com/raysan5/raylib/commit/7f68c65406a8321ec192adc6abc3142ac48eb071
+static void DrawTextureQuad(Texture2D texture, Vector2 tiling, Vector2 offset, Rectangle quad, Color tint) {
+  // WARNING: This solution only works if TEXTURE_WRAP_REPEAT is supported,
+  // NPOT textures supported is required and OpenGL ES 2.0 could not support it
+  Rectangle source = { offset.x*texture.width, offset.y*texture.height, tiling.x*texture.width, tiling.y*texture.height };
+  Vector2 origin = { 0.0f, 0.0f };
+
+  DrawTexturePro(texture, source, quad, origin, 0.0f, tint);
 }
 
 void Canvas$Draw(Canvas* c) {

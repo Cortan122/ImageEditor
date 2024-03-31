@@ -21,7 +21,7 @@ Image LoadImageResource_impl(char* name, unsigned char* data,
       return loadedResources[i].image;
   }
 
-  Image image = LoadImageFromMemory("png", data, len);
+  Image image = LoadImageFromMemory(".png", data, len);
 
   sb_push(loadedResources, ((ResourceDescriptor){name, image}));
   return image;
@@ -69,8 +69,8 @@ static Font LoadConsolasFont() {
 
 static Font LoadMinecraftFont() {
   Font font = LoadFontFromImage(LoadImageResource(font_png), MAGENTA, ' ');
-  for (int i = 0; i < font.charsCount; i++) {
-    font.chars[i].value = fontCharRom[i];
+  for (int i = 0; i < font.glyphCount; i++) {
+    font.glyphs[i].value = fontCharRom[i];
   }
   font.baseSize = 8;
   return font;
@@ -83,7 +83,7 @@ static FontDescriptor font_rom[] = {
 };
 
 Font GetFont(int index) {
-  if (font_rom[index].font.chars == NULL)
+  if (font_rom[index].font.glyphs == NULL)
     font_rom[index].font = font_rom[index].loader();
   return font_rom[index].font;
 }
@@ -111,9 +111,5 @@ Shader LoadShaderResource_impl(char* name, unsigned char* data,
     }
   }
 
-#ifdef FILTER_POINT
   return LoadShaderFromMemory(NULL, (char*)data);
-#else
-  return LoadShaderCode(NULL, (char*)data);
-#endif
 }

@@ -1,6 +1,8 @@
 #include "Textbox.h"
 
 #include <string.h>
+#include <math.h>
+#include <raymath.h>
 
 #include "resource_loader.h"
 #include "stretchy_buffer.h"
@@ -95,7 +97,7 @@ void Textbox$backspace(Textbox* textbox, bool isbackward, bool isctrl) {
 
 void Textbox$addCharacter(Textbox* textbox, int utf32) {
   int len = 0;
-  const char* utf8 = CodepointToUtf8(utf32, &len);
+  const char* utf8 = CodepointToUTF8(utf32, &len);
   memcpy(Textbox$_ins(textbox, len), utf8, len);
 }
 

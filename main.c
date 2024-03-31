@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "Canvas.h"
 #include "Textbox.h"
@@ -9,6 +10,7 @@ void drawAlignedText(const char* text, int ypos, int fontsize, int aligment,
                      Color c) {
   if (text == NULL) return;
 
+  SetTextLineSpacing(fontsize);
   int measure = MeasureText(text, fontsize);
   int xpos = 0;
   if (aligment == 0) {

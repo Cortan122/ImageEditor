@@ -1,6 +1,8 @@
 #include "FloatingImage.h"
 
 #include <stdlib.h>
+#include <math.h>
+#include <raymath.h>
 
 void FloatingImage$Draw(FloatingImage* fi) {
   DrawTextureEx(fi->texture, fi->pos, 0, fi->scale, WHITE);
@@ -34,8 +36,8 @@ bool FloatingImage$Update(FloatingImage* fi) {
 
   if (IsKeyPressed(KEY_P)) {
     fi->nearestNeighborToggle = !fi->nearestNeighborToggle;
-    SetTextureFilter(fi->texture, fi->nearestNeighborToggle ? FILTER_BILINEAR
-                                                            : FILTER_POINT);
+    SetTextureFilter(fi->texture, fi->nearestNeighborToggle ? TEXTURE_FILTER_BILINEAR
+                                                            : TEXTURE_FILTER_POINT);
   }
 
   return true;

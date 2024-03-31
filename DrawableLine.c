@@ -1,6 +1,7 @@
 #include "DrawableLine.h"
 
 #include <string.h>
+#include <raymath.h>
 
 #include "BezierCurve.h"
 
