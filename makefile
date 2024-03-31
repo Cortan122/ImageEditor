@@ -19,7 +19,7 @@ resources.c: $(RESOURCES)
 	find $^ -exec xxd -i {} \; > $@
 
 resources.h: resources.c
-	cproto -ve $< > $@
+	./cproto.sh $< > $@
 
 resource_loader.c:
 	touch $@
@@ -38,6 +38,9 @@ runexe: allexe
 
 clean:
 	rm -f *.o *.exe $(EXENAME) stretchy_buffer.h resources.c resources.h demo.zip
+
+install: $(EXENAME)
+	install -D $(EXENAME) /usr/local/bin/raylid
 
 demo.zip: allexe
 	# strip.exe $(EXENAME).exe
