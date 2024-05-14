@@ -290,6 +290,8 @@ void Editor$Draw(Editor* ed) {
         "right click - add text\n"
         "ctrl+c/v/s - copy/paste/save\n"
         "x - crop\n"
+        "b - box\n"
+        "c - color picker\n"
         "ctrl+p - take screenshot";
     Vector2 measure =
         MeasureTextEx(GetFontDefault(), text, 10 * fontsize, fontsize);
@@ -413,7 +415,8 @@ int main(int argc, char** argv) {
 
   int i = 0;
   while (!WindowShouldClose()) {
-    if (i++ % 3 == 0) waitEvents();
+    // TODO: this kind of sleeping breaks key repeat rates
+    if (i++ % 3 == 0 && !IsWindowFocused()) waitEvents();
     BeginDrawing();
 
     Editor$Update(&theEditor);
