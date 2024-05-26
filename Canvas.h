@@ -41,5 +41,6 @@ bool Canvas$copy(Canvas* c, char* name);
 void Canvas$addDrawable(Canvas* c, Drawable d);
 void Canvas$Update(Canvas* c);
 void Canvas$Draw(Canvas* c);
+void Canvas$Delete(Canvas* c);
 bool Canvas$loadImage(Canvas* c, char* file);
 void Canvas$SetColor(Canvas* c, Color color);

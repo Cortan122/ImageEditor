@@ -5,10 +5,13 @@
 #include <raymath.h>
 
 #include "CropRectangle.h"
+#include "Drawable.h"
 #include "DrawableLine.h"
 #include "FloatingImage.h"
+#include "Screenshot.h"
 #include "Textbox.h"
 #include "resource_loader.h"
+#include "stretchy_buffer.h"
 
 const float scaleRom[] = {0, 0.12, 0.25, 0.5, 0.75, 1, 2, 4, 8, 0};
 const float movementSpeed = 100;
@@ -201,9 +204,8 @@ void Canvas$Update(Canvas* c) {
     if (IsKeyTyped(KEY_X)) Canvas$addDrawable(c, CropRectangle$New(c));
     if (IsKeyTyped(KEY_B)) Canvas$addDrawable(c, CropRectangle$New(NULL));
 
-    int count;
     FilePathList files = LoadDroppedFiles();
-    for (int i = 0; i < files.count; i++) {
+    for (size_t i = 0; i < files.count; i++) {
       Canvas$addDrawable(c, FloatingImage$New(files.paths[i]));
     }
     UnloadDroppedFiles(files);
@@ -272,4 +274,14 @@ void Canvas$SetColor(Canvas* c, Color color) {
   if (c->isActive) {
     Drawable$SetColor(&sb_last(c->drawables), color);
   }
+}
+
+void Canvas$Delete(Canvas* c) {
+  Screenshot$Delete(&c->screenshot);
+  UnloadTexture(c->transparencyTexture);
+
+  for (int i = 0; i < sb_count(c->drawables); i++) {
+    Drawable$Delete(&c->drawables[i]);
+  }
+  sb_free(c->drawables);
 }

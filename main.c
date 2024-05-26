@@ -272,7 +272,9 @@ void Editor$Draw(Editor* ed) {
         "x - crop\n"
         "b - box\n"
         "c - color picker\n"
+        "p - toggle pixelatedness\n"
         "ctrl+p - take screenshot";
+    SetTextLineSpacing(10);  // i have no idea why this works
     Vector2 measure = MeasureTextEx(GetFontDefault(), text, 10 * fontsize, fontsize);
     drawAlignedText(text, -GetScreenHeight() / 2 - measure.y / 2 + 10 * fontsize, 10 * fontsize, 0, DARKGRAY);
   }
@@ -396,6 +398,7 @@ int main(int argc, char** argv) {
     EndDrawing();
   }
   Canvas$copy(&theEditor.canvas, NULL);
+  Canvas$Delete(&theEditor.canvas);
 
   CloseWindow();
   return 0;

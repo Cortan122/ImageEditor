@@ -2,14 +2,19 @@
 
 LDFLAGS=-lraylib -lm -lglfw
 WINLDFLAGS=-lmsvcrt -lopengl32 -lgdi32 -lkernel32 -lshell32 -luser32 -lraylib -Wl,-subsystem=gui
-CFLAGS=-fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Werror=vla -g -Og
+WARNINGS=-Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function
+CFLAGS=-fdollars-in-identifiers -funsigned-char $(WARNINGS) -Werror=vla
 EXENAME=main
 
 DRAWABLES = $(filter-out resources.c, $(wildcard *.c))
 RESOURCES = $(wildcard resources/*.*)
 
+debug: $(EXENAME)
 all: $(EXENAME)
 allexe: $(EXENAME).exe
+
+debug: CFLAGS += -g -O0 -fsanitize=address # -fanalyzer
+install: CFLAGS += -O3 -DNO_DEBUG
 
 resource_loader.c: stretchy_buffer.h resources.c resources.h
 $(DRAWABLES): $(wildcard *.h)

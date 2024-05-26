@@ -104,7 +104,8 @@ void DrawableLine$drawDebug(DrawableLine* dl) {
 }
 
 void DrawableLine$Draw(DrawableLine* dl) {
-  DrawTriangleStrip(DrawableLine$getTriangleStrip(dl), dl->triangleStripLength, dl->color);
+  DrawableLine$getTriangleStrip(dl);
+  DrawTriangleStrip(dl->triangleStrip, dl->triangleStripLength, dl->color);
 }
 
 bool DrawableLine$Update(DrawableLine* dl) {
