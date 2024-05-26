@@ -18,10 +18,14 @@ static float V2DistanceBetween2Points(Vector2d* a, Vector2d* b) {
 }
 
 /* returns squared length of input vector */
-static float V2SquaredLength(Vector2d* a) { return a->x * a->x + a->y * a->y; }
+static float V2SquaredLength(Vector2d* a) {
+  return a->x * a->x + a->y * a->y;
+}
 
 /* returns length of input vector */
-static float V2Length(Vector2d* a) { return sqrt(V2SquaredLength(a)); }
+static float V2Length(Vector2d* a) {
+  return sqrt(V2SquaredLength(a));
+}
 
 static Vector2d* V2Scale(Vector2d* v, float newlen) {
   float len = V2Length(v);
@@ -148,8 +152,7 @@ static float NewtonRaphsonRootFind(Vector2d* Q, Vector2d P, float u) {
 
   /* Compute f(u)/f'(u) */
   numerator = (Q_u.x - P.x) * (Q1_u.x) + (Q_u.y - P.y) * (Q1_u.y);
-  denominator = (Q1_u.x) * (Q1_u.x) + (Q1_u.y) * (Q1_u.y) +
-                (Q_u.x - P.x) * (Q2_u.x) + (Q_u.y - P.y) * (Q2_u.y);
+  denominator = (Q1_u.x) * (Q1_u.x) + (Q1_u.y) * (Q1_u.y) + (Q_u.x - P.x) * (Q2_u.x) + (Q_u.y - P.y) * (Q2_u.y);
 
   /* u = u - f(u)/f'(u) */
   uPrime = u - (numerator / denominator);
@@ -166,8 +169,7 @@ static float NewtonRaphsonRootFind(Vector2d* Q, Vector2d P, float u) {
  * @param u        Current parameter values
  * @param bezCurve Current fitted curve
  */
-static float* Reparameterize(Vector2d* d, int first, int last, float* u,
-                             Vector2d* bezCurve) {
+static float* Reparameterize(Vector2d* d, int first, int last, float* u, Vector2d* bezCurve) {
   int nPts = last - first + 1;
   int i;
   float* uPrime; /* New parameter values */
@@ -197,7 +199,9 @@ static float B2(float u) {
   return 3 * u * u * tmp;
 }
 
-static float B3(float u) { return u * u * u; }
+static float B3(float u) {
+  return u * u * u;
+}
 
 /**
  * Approximate unit tangent at left endpoint of digitized curve
@@ -258,8 +262,7 @@ static float* ChordLengthParameterize(Vector2d* d, int first, int last) {
 
   u[0] = 0.0;
   for (i = first + 1; i <= last; i++) {
-    u[i - first] =
-        u[i - first - 1] + V2DistanceBetween2Points(&d[i], &d[i - 1]);
+    u[i - first] = u[i - first - 1] + V2DistanceBetween2Points(&d[i], &d[i - 1]);
   }
 
   for (i = first + 1; i <= last; i++) {
@@ -280,8 +283,7 @@ static float* ChordLengthParameterize(Vector2d* d, int first, int last) {
  * @param u          Parameterization of points
  * @param splitPoint Point of maximum error
  */
-static float ComputeMaxError(Vector2d* d, int first, int last,
-                             Vector2d* bezCurve, float* u, int* splitPoint) {
+static float ComputeMaxError(Vector2d* d, int first, int last, Vector2d* bezCurve, float* u, int* splitPoint) {
   int i;
   float maxDist; /* Maximum error */
   float dist;    /* Current error */
@@ -312,8 +314,7 @@ static float ComputeMaxError(Vector2d* d, int first, int last,
  * @param tHat1  Unit tangents at endpoints
  * @param tHat2  Unit tangents at endpoints
  */
-static Vector2d* GenerateBezier(Vector2d* d, int first, int last, float* uPrime,
-                                Vector2d tHat1, Vector2d tHat2) {
+static Vector2d* GenerateBezier(Vector2d* d, int first, int last, float* uPrime, Vector2d tHat1, Vector2d tHat2) {
   int i;
   int nPts;                            /* Number of pts in sub-curve */
   float C[2][2];                       /* Matrix C */
@@ -349,8 +350,7 @@ static Vector2d* GenerateBezier(Vector2d* d, int first, int last, float* uPrime,
         V2SubII(d[first + i],
                 V2AddII(V2ScaleIII(d[first], B0(uPrime[i])),
                         V2AddII(V2ScaleIII(d[first], B1(uPrime[i])),
-                                V2AddII(V2ScaleIII(d[last], B2(uPrime[i])),
-                                        V2ScaleIII(d[last], B3(uPrime[i]))))));
+                                V2AddII(V2ScaleIII(d[last], B2(uPrime[i])), V2ScaleIII(d[last], B3(uPrime[i]))))));
 
     X[0] += V2Dot(&v1, &tmp);
     X[1] += V2Dot(&v2, &tmp);
@@ -402,8 +402,8 @@ static Vector2d* GenerateBezier(Vector2d* d, int first, int last, float* uPrime,
  * @param tHat2 Unit tangent vectors at endpoints
  * @param error User-defined error squared
  */
-static void FitCubic(Vector2d* d, int first, int last, Vector2d tHat1,
-                     Vector2d tHat2, float error, BezierPath* res) {
+static void FitCubic(Vector2d* d, int first, int last, Vector2d tHat1, Vector2d tHat2, float error,
+                     BezierPath* res) {
   Vector2d* bezCurve;    /* Control points of fitted Bezier curve*/
   float* u;              /* Parameter values for point */
   float* uPrime;         /* Improved parameter values */

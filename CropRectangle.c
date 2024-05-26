@@ -1,11 +1,13 @@
 #include "CropRectangle.h"
 
-#include <stdlib.h>
 #include <raymath.h>
+#include <stdlib.h>
 
 const Color CropRectangle_color = {0, 0, 0, 102};
 
-Vector2 roundv2(Vector2 v) { return (Vector2){roundf(v.x), roundf(v.y)}; }
+Vector2 roundv2(Vector2 v) {
+  return (Vector2){roundf(v.x), roundf(v.y)};
+}
 
 Rectangle CropRectangle$get(CropRectangle* cr) {
   Rectangle res = {
@@ -82,18 +84,14 @@ void CropRectangle$Draw(CropRectangle* cr) {
     int invx = cr->parentCanvas->texture.width - rec.x - rec.width;
     int invy = cr->parentCanvas->texture.height - rec.y - rec.height;
 
-    DrawRectangle(0, 0, rec.x, cr->parentCanvas->texture.height,
-                  CropRectangle_color);
+    DrawRectangle(0, 0, rec.x, cr->parentCanvas->texture.height, CropRectangle_color);
     DrawRectangle(rec.x, 0, rec.width, rec.y, CropRectangle_color);
-    DrawRectangle(rec.x, rec.y + rec.height, rec.width, invy,
-                  CropRectangle_color);
-    DrawRectangle(rec.x + rec.width, 0, invx, cr->parentCanvas->texture.height,
-                  CropRectangle_color);
+    DrawRectangle(rec.x, rec.y + rec.height, rec.width, invy, CropRectangle_color);
+    DrawRectangle(rec.x + rec.width, 0, invx, cr->parentCanvas->texture.height, CropRectangle_color);
 
     DrawRectangleLinesEx(CropRectangle$get(cr), 2, cr->frameColor);
   } else {
-    DrawRectangle(0, 0, cr->parentCanvas->texture.width,
-                  cr->parentCanvas->texture.height, CropRectangle_color);
+    DrawRectangle(0, 0, cr->parentCanvas->texture.width, cr->parentCanvas->texture.height, CropRectangle_color);
   }
 }
 

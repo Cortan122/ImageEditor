@@ -1,11 +1,10 @@
 #pragma once
 #include <raylib.h>
 
-#define DRAWABLE(self, type)                                       \
-  (Drawable) {                                                     \
-    self, #type, (UpdateMethod)type##$Update, (Method)type##$Draw, \
-        (Method)type##$Delete, (MoveMethod)type##$Move,            \
-        (ColorMethod)type##$SetColor,                              \
+#define DRAWABLE(self, type)                                                              \
+  (Drawable) {                                                                            \
+    self, #type, (UpdateMethod)type##$Update, (Method)type##$Draw, (Method)type##$Delete, \
+        (MoveMethod)type##$Move, (ColorMethod)type##$SetColor,                            \
   }
 
 typedef void (*Method)(void*);

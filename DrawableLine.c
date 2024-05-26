@@ -1,7 +1,7 @@
 #include "DrawableLine.h"
 
-#include <string.h>
 #include <raymath.h>
+#include <string.h>
 
 #include "BezierCurve.h"
 
@@ -26,8 +26,7 @@ void DrawableLine$_init(DrawableLine* dl) {
 
 void DrawableLine$add(DrawableLine* dl, Vector2 point) {
   int len = sb_count(dl->line);
-  if (!len || dl->line[len - 1].x != point.x ||
-      dl->line[len - 1].y != point.y) {
+  if (!len || dl->line[len - 1].x != point.x || dl->line[len - 1].y != point.y) {
     sb_push(dl->line, point);
     nfree(dl->triangleStrip);
   }
@@ -80,8 +79,7 @@ Vector2* DrawableLine$getTriangleStrip(DrawableLine* dl) {
   for (int i = 0; i < sb_count(bez); i++) {
     for (int j = 0; j < dl->subdivisions; j++) {
       Vector2d v2d = Bezier(3, bez[i], j / (dl->subdivisions - 1.));
-      if (!bezi || bezline[bezi - 1].x != v2d.x ||
-          bezline[bezi - 1].y != v2d.y) {
+      if (!bezi || bezline[bezi - 1].x != v2d.x || bezline[bezi - 1].y != v2d.y) {
         bezline[bezi++] = (Vector2){v2d.x, v2d.y};
       }
     }
@@ -106,14 +104,12 @@ void DrawableLine$drawDebug(DrawableLine* dl) {
 }
 
 void DrawableLine$Draw(DrawableLine* dl) {
-  DrawTriangleStrip(DrawableLine$getTriangleStrip(dl), dl->triangleStripLength,
-                    dl->color);
+  DrawTriangleStrip(DrawableLine$getTriangleStrip(dl), dl->triangleStripLength, dl->color);
 }
 
 bool DrawableLine$Update(DrawableLine* dl) {
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) DrawableLine$Delete(dl);
-  if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
-    DrawableLine$add(dl, GetMousePosition());
+  if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) DrawableLine$add(dl, GetMousePosition());
 
   return !IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
 }
@@ -124,8 +120,7 @@ bool DrawableLine$Update(DrawableLine* dl) {
     res = true;                          \
   }
 
-bool DrawableLine$setOptions(DrawableLine* dl, float error, float thickness,
-                             int subdivisions, Color color) {
+bool DrawableLine$setOptions(DrawableLine* dl, float error, float thickness, int subdivisions, Color color) {
   DrawableLine$_init(dl);
   bool res = false;
 
@@ -135,8 +130,7 @@ bool DrawableLine$setOptions(DrawableLine* dl, float error, float thickness,
 
   if (res) nfree(dl->triangleStrip);
 
-  if (memcmp(&dl->color, &color, sizeof(Color)) &&
-      memcmp(&color, &BLANK, sizeof(Color))) {
+  if (memcmp(&dl->color, &color, sizeof(Color)) && memcmp(&color, &BLANK, sizeof(Color))) {
     dl->color = color;
     res = true;
   }

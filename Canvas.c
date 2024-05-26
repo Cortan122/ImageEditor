@@ -68,10 +68,8 @@ bool Canvas$popDrawable(Canvas* c) {
 }
 
 void Canvas$updateSize(Canvas* c) {
-  c->screenWidth =
-      GetScreenWidth() - c->marginTopLeft.x - c->marginBottomRight.x;
-  c->screenHeight =
-      GetScreenHeight() - c->marginTopLeft.y - c->marginBottomRight.y;
+  c->screenWidth = GetScreenWidth() - c->marginTopLeft.x - c->marginBottomRight.x;
+  c->screenHeight = GetScreenHeight() - c->marginTopLeft.y - c->marginBottomRight.y;
 }
 
 void Canvas$reload(Canvas* c, bool checkClipboard) {
@@ -82,8 +80,7 @@ void Canvas$reload(Canvas* c, bool checkClipboard) {
   }
 
   c->texture = c->screenshot.texture;
-  SetTextureFilter(c->texture,
-                   c->nearestNeighborToggle ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
+  SetTextureFilter(c->texture, c->nearestNeighborToggle ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
   Canvas$updateSize(c);
   Canvas$rescale(c);
 }
@@ -141,8 +138,7 @@ void Canvas$keyboardShortcuts(Canvas* c) {
   if (IsKeyTyped(KEY_HOME) || IsKeyTyped(KEY_R)) Canvas$rescale(c);
   if (!isctrl && IsKeyTyped(KEY_P)) {
     c->nearestNeighborToggle = !c->nearestNeighborToggle;
-    SetTextureFilter(c->texture,
-                     c->nearestNeighborToggle ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
+    SetTextureFilter(c->texture, c->nearestNeighborToggle ? TEXTURE_FILTER_BILINEAR : TEXTURE_FILTER_POINT);
   }
 
   if (IsKeyTyped(KEY_L)) Canvas$takeScreenshot(c);
@@ -189,8 +185,7 @@ void Canvas$Update(Canvas* c) {
   c->scrollAccumulator = continuousDelta;
 
   bool isctrl = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
-  if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON) ||
-      isctrl && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+  if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON) || isctrl && IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
     Vector2 mousePos = GetMousePosition();
     c->pos.x += mousePos.x - c->prevMousePos.x;
     c->pos.y += mousePos.y - c->prevMousePos.y;
@@ -201,10 +196,8 @@ void Canvas$Update(Canvas* c) {
     Canvas$updateDrawable(c);
   }
   if (!c->isActive) {
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-      Canvas$addDrawable(c, DrawableLine$New());
-    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON))
-      Canvas$addDrawable(c, Textbox$New());
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) Canvas$addDrawable(c, DrawableLine$New());
+    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) Canvas$addDrawable(c, Textbox$New());
     if (IsKeyTyped(KEY_X)) Canvas$addDrawable(c, CropRectangle$New(c));
     if (IsKeyTyped(KEY_B)) Canvas$addDrawable(c, CropRectangle$New(NULL));
 
@@ -232,30 +225,24 @@ void Canvas$Update(Canvas* c) {
 static void DrawTextureQuad(Texture2D texture, Vector2 tiling, Vector2 offset, Rectangle quad, Color tint) {
   // WARNING: This solution only works if TEXTURE_WRAP_REPEAT is supported,
   // NPOT textures supported is required and OpenGL ES 2.0 could not support it
-  Rectangle source = { offset.x*texture.width, offset.y*texture.height, tiling.x*texture.width, tiling.y*texture.height };
-  Vector2 origin = { 0.0f, 0.0f };
+  Rectangle source = {offset.x * texture.width, offset.y * texture.height, tiling.x * texture.width,
+                      tiling.y * texture.height};
+  Vector2 origin = {0.0f, 0.0f};
 
   DrawTexturePro(texture, source, quad, origin, 0.0f, tint);
 }
 
 void Canvas$Draw(Canvas* c) {
   if (c->transparencyTexture.id == 0) {
-    c->transparencyTexture =
-        LoadTextureFromImage(LoadImageResource(transparency_png));
+    c->transparencyTexture = LoadTextureFromImage(LoadImageResource(transparency_png));
   }
 
-  BeginScissorMode(c->marginTopLeft.x, c->marginTopLeft.y, c->screenWidth,
-                   c->screenHeight);
+  BeginScissorMode(c->marginTopLeft.x, c->marginTopLeft.y, c->screenWidth, c->screenHeight);
 
   Vector2 realpos = Vector2Add(c->marginTopLeft, c->pos);
   Texture tiling = c->transparencyTexture;
-  DrawTextureQuad(
-      tiling,
-      (Vector2){c->screenWidth / tiling.width, c->screenHeight / tiling.height},
-      (Vector2){0},
-      (Rectangle){c->marginTopLeft.x, c->marginTopLeft.y, c->screenWidth,
-                  c->screenHeight},
-      WHITE);
+  DrawTextureQuad(tiling, (Vector2){c->screenWidth / tiling.width, c->screenHeight / tiling.height}, (Vector2){0},
+                  (Rectangle){c->marginTopLeft.x, c->marginTopLeft.y, c->screenWidth, c->screenHeight}, WHITE);
   DrawTextureEx(c->texture, realpos, 0, c->scale, WHITE);
 
   BeginMode2D((Camera2D){realpos, (Vector2){0}, 0, c->scale});

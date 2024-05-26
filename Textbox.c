@@ -1,9 +1,9 @@
 #include "Textbox.h"
 
-#include <stdio.h>
-#include <string.h>
 #include <math.h>
 #include <raymath.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "resource_loader.h"
 #include "stretchy_buffer.h"
@@ -109,8 +109,7 @@ void Textbox$addText(Textbox* textbox, const char* text) {
 }
 
 Vector2 Textbox$measureText(Textbox* textbox) {
-  return MeasureTextEx(textbox->font, textbox->text,
-                       textbox->font.baseSize * textbox->fontSize,
+  return MeasureTextEx(textbox->font, textbox->text, textbox->font.baseSize * textbox->fontSize,
                        textbox->fontSize);
 }
 
@@ -129,8 +128,7 @@ void Textbox$Draw(Textbox* textbox) {
 
   char temp = textbox->text[textbox->cursorPos];
   textbox->text[textbox->cursorPos] = '\0';
-  Vector2 res =
-      DrawTextScaled(font, textbox->text, pos, fontScale, textbox->textColor);
+  Vector2 res = DrawTextScaled(font, textbox->text, pos, fontScale, textbox->textColor);
   textbox->text[textbox->cursorPos] = temp;
 
   if (textbox->showCursor) {
@@ -144,18 +142,15 @@ void Textbox$Draw(Textbox* textbox) {
         break;
       }
     }
-    int delta =
-        (fontScale - cursorWidth) / 2;  // тут всё должно делится парвильно
+    int delta = (fontScale - cursorWidth) / 2;  // тут всё должно делится парвильно
     res.x += delta;
-    DrawRectangleV(res, (Vector2){cursorWidth, font.recs[0].height * fontScale},
-                   textbox->cursorColor);
+    DrawRectangleV(res, (Vector2){cursorWidth, font.recs[0].height * fontScale}, textbox->cursorColor);
     res.x += fontScale - delta;
   } else {
     res.x += fontScale;
   }
 
-  DrawTextScaled(font, textbox->text + textbox->cursorPos, res, fontScale,
-                 textbox->textColor);
+  DrawTextScaled(font, textbox->text + textbox->cursorPos, res, fontScale, textbox->textColor);
 }
 
 bool Textbox$Update(Textbox* textbox) {
@@ -178,13 +173,10 @@ bool Textbox$Update(Textbox* textbox) {
 
   if (isctrl) {
     if (IsKeyTyped(KEY_EQUAL) || IsKeyTyped(KEY_KP_ADD)) textbox->fontSize++;
-    if (textbox->fontSize > 1 &&
-        (IsKeyTyped(KEY_MINUS) || IsKeyTyped(KEY_KP_SUBTRACT)))
-      textbox->fontSize--;
+    if (textbox->fontSize > 1 && (IsKeyTyped(KEY_MINUS) || IsKeyTyped(KEY_KP_SUBTRACT))) textbox->fontSize--;
   }
 
-  if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE) ||
-      IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+  if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     textbox->showCursor = false;
     return false;
   }

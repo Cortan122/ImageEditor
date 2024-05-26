@@ -31,8 +31,7 @@ Vector2* DrawableLine$getTriangleStrip(DrawableLine* dl);
 void DrawableLine$drawDebug(DrawableLine* dl);
 void DrawableLine$Draw(DrawableLine* dl);
 bool DrawableLine$Update(DrawableLine* dl);
-bool DrawableLine$setOptions(DrawableLine* dl, float error, float thickness,
-                             int subdivisions, Color color);
+bool DrawableLine$setOptions(DrawableLine* dl, float error, float thickness, int subdivisions, Color color);
 void DrawableLine$Move(DrawableLine* dl, Vector2 delta);
 void DrawableLine$SetColor(DrawableLine* dl, Color color);
 Drawable DrawableLine$New();

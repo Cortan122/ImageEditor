@@ -33,8 +33,7 @@ Image getImageFromClipboard() {
 
       uint32_t* idata = (uint32_t*)(data + header->bV5Size);
       if (header->bV5Compression == BI_BITFIELDS && header->bV5SizeImage > 12) {
-        if (idata[0] == 0x00ff0000 && idata[1] == 0x0000ff00 &&
-            idata[2] == 0x000000ff) {
+        if (idata[0] == 0x00ff0000 && idata[1] == 0x0000ff00 && idata[2] == 0x000000ff) {
           idata += 3;
         }
       }
@@ -43,8 +42,7 @@ Image getImageFromClipboard() {
         image.format = UNCOMPRESSED_R8G8B8A8;
         for (int i = 0; i < image.height * image.width; i++) {
           uint32_t temp = idata[i];
-          imagedata[i] = (temp & 0xff00ff00) | (temp & 0x00ff0000) >> 16 |
-                         (temp & 0x000000ff) << 16;
+          imagedata[i] = (temp & 0xff00ff00) | (temp & 0x00ff0000) >> 16 | (temp & 0x000000ff) << 16;
         }
       } else {
         image.format = UNCOMPRESSED_R8G8B8;
@@ -70,8 +68,8 @@ Image getImageFromClipboard() {
 }
 
 bool putImageToClipboard(Image image) {
-  if (image.data == NULL || image.width <= 0 || image.height <= 0 ||
-      image.mipmaps != 1 || image.format != UNCOMPRESSED_R8G8B8A8)
+  if (image.data == NULL || image.width <= 0 || image.height <= 0 || image.mipmaps != 1 ||
+      image.format != UNCOMPRESSED_R8G8B8A8)
     return false;
 
   size_t datasize = image.width * image.height * 4 + sizeof(BITMAPV5HEADER);
@@ -100,9 +98,7 @@ bool putImageToClipboard(Image image) {
   for (int i = 0; i < image.height; i++) {
     for (int j = 0; j < image.width; j++) {
       uint32_t temp = idata[(image.height - i - 1) * image.width + j];
-      imagedata[i * image.width + j] = (temp & 0xff00ff00) |
-                                       (temp & 0x00ff0000) >> 16 |
-                                       (temp & 0x000000ff) << 16;
+      imagedata[i * image.width + j] = (temp & 0xff00ff00) | (temp & 0x00ff0000) >> 16 | (temp & 0x000000ff) << 16;
     }
   }
   GlobalUnlock(handle);
@@ -128,7 +124,9 @@ bool takeScreenshot() {
   return SendInput(1, &input, sizeof(INPUT)) == 1;
 }
 
-void waitEvents() { WaitMessage(); }
+void waitEvents() {
+  WaitMessage();
+}
 
 #else
 #include <unistd.h>
@@ -162,8 +160,7 @@ Image getImageFromClipboard() {
   Image res = {0};
 
   if (createTempFile()) {
-    if (!system(
-            "xclip -selection clipboard -t image/png -o > \"$tempfilename\"")) {
+    if (!system("xclip -selection clipboard -t image/png -o > \"$tempfilename\"")) {
       res = LoadImage(tempFileName);
     }
   }
@@ -177,8 +174,7 @@ bool putImageToClipboard(Image image) {
 
   if (createTempFile()) {
     if (ExportImage(image, tempFileName)) {
-      if (!system(
-              "xclip -selection clipboard -t image/png -i \"$tempfilename\"")) {
+      if (!system("xclip -selection clipboard -t image/png -i \"$tempfilename\"")) {
         res = true;
       }
     }
@@ -204,7 +200,9 @@ bool takeScreenshot() {
 
 #include <GLFW/glfw3.h>
 
-void waitEvents() { glfwWaitEvents(); }
+void waitEvents() {
+  glfwWaitEvents();
+}
 
 #endif
 
@@ -227,8 +225,7 @@ bool Screenshot$update(Screenshot* cm) {
   double t1 = GetTime();
   Image img = getImageFromClipboard();
   double t2 = GetTime();
-  printf("getImageFromClipboard(%d) = %.2fms\n", img.data != NULL,
-         (t2 - t1) * 1000);
+  printf("getImageFromClipboard(%d) = %.2fms\n", img.data != NULL, (t2 - t1) * 1000);
   return Screenshot$setImage(cm, img);
 }
 

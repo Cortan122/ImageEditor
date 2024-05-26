@@ -1,13 +1,12 @@
+#include <math.h>
 #include <raylib.h>
 #include <stdio.h>
 #include <string.h>
-#include <math.h>
 
 #include "Canvas.h"
 #include "Textbox.h"
 
-void drawAlignedText(const char* text, int ypos, int fontsize, int aligment,
-                     Color c) {
+void drawAlignedText(const char* text, int ypos, int fontsize, int aligment, Color c) {
   if (text == NULL) return;
 
   SetTextLineSpacing(fontsize);
@@ -23,8 +22,7 @@ void drawAlignedText(const char* text, int ypos, int fontsize, int aligment,
 
   if (ypos < 0) ypos = GetScreenHeight() + ypos - fontsize + 2;
 
-  DrawTextEx(GetFontDefault(), text, (Vector2){xpos, ypos}, fontsize,
-             fontsize / 10, c);
+  DrawTextEx(GetFontDefault(), text, (Vector2){xpos, ypos}, fontsize, fontsize / 10, c);
 }
 
 typedef struct ColorBlob {
@@ -96,8 +94,7 @@ ColorBlob colorRom[] = {
 
 void drawColorBlob(ColorBlob cb) {
   if (cb.rect.height == 0 || cb.rect.width == 0) return;
-  Color aspectColor =
-      (cb.color.r == 0 && cb.color.g == 0 && cb.color.b == 0) ? WHITE : BLACK;
+  Color aspectColor = (cb.color.r == 0 && cb.color.g == 0 && cb.color.b == 0) ? WHITE : BLACK;
 
   bool isHighlighted = CheckCollisionPointRec(GetMousePosition(), cb.rect);
   DrawRectangleRec(cb.rect, Fade(cb.color, isHighlighted ? 0.6 : 1.0));
@@ -108,12 +105,10 @@ void drawColorBlob(ColorBlob cb) {
   DrawText(cb.name, cb.rect.x + 10, cb.rect.y + 10, 20, Fade(aspectColor, 0.5));
   if (line2) {
     *line2 = '\n';
-    DrawText(line2 + 1, cb.rect.x + 10, cb.rect.y + 30, 20,
-             Fade(aspectColor, 0.5));
+    DrawText(line2 + 1, cb.rect.x + 10, cb.rect.y + 30, 20, Fade(aspectColor, 0.5));
   }
 
-  const char* hex =
-      TextFormat("#%02X%02X%02X", cb.color.r, cb.color.g, cb.color.b);
+  const char* hex = TextFormat("#%02X%02X%02X", cb.color.r, cb.color.g, cb.color.b);
   DrawText(hex, cb.rect.x + 10, cb.rect.y + 80, 10, Fade(aspectColor, 0.5));
 }
 
@@ -122,22 +117,14 @@ void layoutColorBlobs(ColorBlob* arr) {
   int blobsInRow = (GetScreenWidth() - 20) / (squareSideLength + 10);
   if (blobsInRow > 9) blobsInRow = 9;
   if (blobsInRow == 5) blobsInRow = 4;
-  int margin = (GetScreenWidth() - blobsInRow * squareSideLength -
-                (blobsInRow - 1) * 10) /
-               2;
-  int priority = blobsInRow == 9   ? 3
-                 : blobsInRow == 6 ? 1
-                 : blobsInRow >= 7 ? 2
-                                   : 0;
+  int margin = (GetScreenWidth() - blobsInRow * squareSideLength - (blobsInRow - 1) * 10) / 2;
+  int priority = blobsInRow == 9 ? 3 : blobsInRow == 6 ? 1 : blobsInRow >= 7 ? 2 : 0;
 
   int j = 0;
   for (int i = 0; arr[i].name; i++) {
-    arr[i].rect.x =
-        margin + squareSideLength * (j % blobsInRow) + 10 * (j % blobsInRow);
-    arr[i].rect.y =
-        80 + squareSideLength * (j / blobsInRow) + 10 * (j / blobsInRow);
-    if (arr[i].priority <= priority &&
-        arr[i].rect.y + squareSideLength < GetScreenHeight()) {
+    arr[i].rect.x = margin + squareSideLength * (j % blobsInRow) + 10 * (j % blobsInRow);
+    arr[i].rect.y = 80 + squareSideLength * (j / blobsInRow) + 10 * (j / blobsInRow);
+    if (arr[i].priority <= priority && arr[i].rect.y + squareSideLength < GetScreenHeight()) {
       arr[i].rect.height = squareSideLength;
       arr[i].rect.width = squareSideLength;
       j++;
@@ -239,27 +226,21 @@ void Editor$Draw(Editor* ed) {
 
       drawAlignedText("color:   ", 1, 20, -3, DARKGRAY);
       Rectangle colorRect = {GetScreenWidth() - 18, 2, 16, 16};
-      DrawTexture(ed->canvas.transparencyTexture, colorRect.x, colorRect.y,
-                  DARKGRAY);
+      DrawTexture(ed->canvas.transparencyTexture, colorRect.x, colorRect.y, DARKGRAY);
       DrawRectangleRec(colorRect, ed->canvas.color);
 
       const char* sizeIndicator =
-          TextFormat("%dx%d %.0f%%", ed->canvas.texture.width,
-                     ed->canvas.texture.height, ed->canvas.scale * 100);
+          TextFormat("%dx%d %.0f%%", ed->canvas.texture.width, ed->canvas.texture.height, ed->canvas.scale * 100);
       drawAlignedText(sizeIndicator, -1, 20, -3, DARKGRAY);
 
-      drawAlignedText(ed->filename ? GetFileName(ed->filename) : "No open file",
-                      -1, 20, 3, DARKGRAY);
+      drawAlignedText(ed->filename ? GetFileName(ed->filename) : "No open file", -1, 20, 3, DARKGRAY);
 
-      drawAlignedText(TextFormat("%dx%d", GetScreenWidth(), GetScreenHeight()),
-                      1, 20, 0, DARKGRAY);
+      drawAlignedText(TextFormat("%dx%d", GetScreenWidth(), GetScreenHeight()), 1, 20, 0, DARKGRAY);
 
       if (ed->canvas.isActive) {
-        drawAlignedText(sb_last(ed->canvas.drawables).name, -1, 20, 0,
-                        DARKGRAY);
+        drawAlignedText(sb_last(ed->canvas.drawables).name, -1, 20, 0, DARKGRAY);
       } else {
-        drawAlignedText(TextFormat("%d things", sb_count(ed->canvas.drawables)),
-                        -1, 20, 0, DARKGRAY);
+        drawAlignedText(TextFormat("%d things", sb_count(ed->canvas.drawables)), -1, 20, 0, DARKGRAY);
       }
     }
   } else if (ed->mode == UIMODE_COLOR_PALETTE) {
@@ -269,8 +250,7 @@ void Editor$Draw(Editor* ed) {
       drawColorBlob(colorRom[i]);
     }
   } else if (ed->mode == UIMODE_SAVE_AS || ed->mode == UIMODE_OPEN) {
-    drawAlignedText(ed->mode == UIMODE_SAVE_AS ? "Save as" : "Open file", 20,
-                    40, 0, DARKGRAY);
+    drawAlignedText(ed->mode == UIMODE_SAVE_AS ? "Save as" : "Open file", 20, 40, 0, DARKGRAY);
 
     bool isHover = CheckCollisionPointRec(GetMousePosition(), ed->buttonRect);
     drawFramedTextbox(&ed->inputField);
@@ -293,11 +273,8 @@ void Editor$Draw(Editor* ed) {
         "b - box\n"
         "c - color picker\n"
         "ctrl+p - take screenshot";
-    Vector2 measure =
-        MeasureTextEx(GetFontDefault(), text, 10 * fontsize, fontsize);
-    drawAlignedText(text,
-                    -GetScreenHeight() / 2 - measure.y / 2 + 10 * fontsize,
-                    10 * fontsize, 0, DARKGRAY);
+    Vector2 measure = MeasureTextEx(GetFontDefault(), text, 10 * fontsize, fontsize);
+    drawAlignedText(text, -GetScreenHeight() / 2 - measure.y / 2 + 10 * fontsize, 10 * fontsize, 0, DARKGRAY);
   }
 }
 
@@ -326,12 +303,10 @@ void Editor$Update(Editor* ed) {
     if (CheckCollisionPointRec(GetMousePosition(), colorRect)) {
       ed->clickableCursor = true;
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-        Editor$setMode(ed, UIMODE_COLOR_PALETTE);
+      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) Editor$setMode(ed, UIMODE_COLOR_PALETTE);
     }
 
-    if (!isctrl && IsKeyPressed(KEY_C) && !ed->canvas.isActive)
-      Editor$setMode(ed, UIMODE_COLOR_PALETTE);
+    if (!isctrl && IsKeyPressed(KEY_C) && !ed->canvas.isActive) Editor$setMode(ed, UIMODE_COLOR_PALETTE);
 
     if (ed->mode == UIMODE_NORMAL) Canvas$Update(&ed->canvas);
   } else if (ed->mode == UIMODE_COLOR_PALETTE) {
@@ -340,8 +315,7 @@ void Editor$Update(Editor* ed) {
     if (IsKeyPressed(KEY_ESCAPE)) Editor$setMode(ed, UIMODE_NORMAL);
 
     for (int i = 0; colorRom[i].name; i++) {
-      if (!CheckCollisionPointRec(GetMousePosition(), colorRom[i].rect))
-        continue;
+      if (!CheckCollisionPointRec(GetMousePosition(), colorRom[i].rect)) continue;
       if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Canvas$SetColor(&ed->canvas, colorRom[i].color);
         Editor$setMode(ed, UIMODE_NORMAL);
@@ -362,15 +336,13 @@ void Editor$Update(Editor* ed) {
   } else if (ed->mode == UIMODE_SAVE_AS || ed->mode == UIMODE_OPEN) {
     if (IsKeyPressed(KEY_ESCAPE)) Editor$setMode(ed, UIMODE_NORMAL);
 
-    ed->buttonRect = (Rectangle){GetScreenWidth() / 2 - 150 / 2,
-                                 GetScreenHeight() / 2 + 30, 150, 50};
+    ed->buttonRect = (Rectangle){GetScreenWidth() / 2 - 150 / 2, GetScreenHeight() / 2 + 30, 150, 50};
     bool isHover = CheckCollisionPointRec(GetMousePosition(), ed->buttonRect);
     bool isClick = isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
     if (IsKeyPressed(KEY_ENTER) || isClick) {
       bool res = false;
       if (ed->mode == UIMODE_OPEN) res = Editor$open(ed, ed->inputField.text);
-      if (ed->mode == UIMODE_SAVE_AS)
-        res = Canvas$copy(&ed->canvas, ed->inputField.text);
+      if (ed->mode == UIMODE_SAVE_AS) res = Canvas$copy(&ed->canvas, ed->inputField.text);
 
       if (res) {
         ed->filename = ed->inputField.text;
@@ -382,8 +354,7 @@ void Editor$Update(Editor* ed) {
 
     Textbox$Update(&ed->inputField);
   } else if (ed->mode == UIMODE_HELP) {
-    bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON) ||
-                 IsMouseButtonPressed(MOUSE_RIGHT_BUTTON);
+    bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON) || IsMouseButtonPressed(MOUSE_RIGHT_BUTTON);
     bool keys = IsKeyPressed(KEY_F1) || IsKeyPressed(KEY_H);
     int key = GetKeyPressed();
     if (click || key && key != KEY_F1 && key != KEY_H || keys) {
