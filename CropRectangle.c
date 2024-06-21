@@ -2,6 +2,7 @@
 
 #include <raymath.h>
 #include <stdlib.h>
+
 #include "config.h"
 
 const Color CropRectangle_color = {0, 0, 0, 102};

@@ -383,7 +383,7 @@ int main(int argc, char** argv) {
   SetWindowMinSize(MINSIZE_WIDTH, MINSIZE_HEIGHT);
   SetTargetFPS(60);
   SetExitKey(0);
-  EnableEventWaiting(); // now the fps counter is scuffed
+  EnableEventWaiting();  // now the fps counter is scuffed
 
   Editor theEditor = {0};
   Editor$open(&theEditor, argv[1]);

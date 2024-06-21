@@ -3,8 +3,8 @@
 #include <raymath.h>
 #include <string.h>
 
-#include "config.h"
 #include "BezierCurve.h"
+#include "config.h"
 
 #define nfree(x) \
   do {           \

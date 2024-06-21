@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "config.h"
 #include "resource_loader.h"
 #include "stretchy_buffer.h"
-#include "config.h"
 
 double keyTypingRom[400];
 const double keyRepeatDelay = .500;

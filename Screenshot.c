@@ -1,13 +1,13 @@
 #include "Screenshot.h"
 
+#include <GLFW/glfw3.h>
+#include <assert.h>
+#include <rlgl.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include <GLFW/glfw3.h>
-#include <rlgl.h>
-#include <assert.h>
 #include "config.h"
 
 #ifdef _WIN32
