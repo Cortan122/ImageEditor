@@ -375,21 +375,20 @@ void Editor$Update(Editor* ed) {
 }
 
 int main(int argc, char** argv) {
-  const int screenWidth = 800;
-  const int screenHeight = 450;
+  const int screenWidth = 1000;
+  const int screenHeight = 600;
   SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
   InitWindow(screenWidth, screenHeight, "raylib image editor");
   SetWindowMinSize(300, 300);
   SetTargetFPS(60);
   SetExitKey(0);
+  EnableEventWaiting(); // now the fps counter is scuffed
 
   Editor theEditor = {0};
   Editor$open(&theEditor, argv[1]);
 
   int i = 0;
   while (!WindowShouldClose()) {
-    // TODO: this kind of sleeping breaks key repeat rates
-    if (i++ % 3 == 0 && !IsWindowFocused()) waitEvents();
     BeginDrawing();
 
     Editor$Update(&theEditor);

@@ -1,6 +1,7 @@
 #include "Textbox.h"
 
 #include <math.h>
+#include <raylib.h>
 #include <raymath.h>
 #include <stdio.h>
 #include <string.h>
@@ -40,7 +41,7 @@ void Textbox$init(Textbox* textbox) {
   textbox->pos = (Vector2){0, 0};
 
   textbox->cursorColor = RED;
-  textbox->textColor = GREEN;
+  textbox->textColor = DARKGREEN;
   textbox->font = GetFont(1);
   textbox->fontSize = 2;
   textbox->showCursor = true;

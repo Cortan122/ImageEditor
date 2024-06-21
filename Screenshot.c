@@ -1,9 +1,13 @@
 #include "Screenshot.h"
 
-#include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <GLFW/glfw3.h>
+#include <rlgl.h>
+#include <assert.h>
 
 #ifdef _WIN32
 #define Rectangle Rectangle_winapi
@@ -188,7 +192,7 @@ bool takeScreenshot() {
   bool res = false;
 
   if (createTempFile()) {
-    if (!system("import \"$tempfilename\" && xclip -selection clipboard -t "
+    if (!system("import -window root \"$tempfilename\" && xclip -selection clipboard -t "
                 "image/png -i \"$tempfilename\"")) {
       res = true;
     }
@@ -197,8 +201,6 @@ bool takeScreenshot() {
 
   return res;
 }
-
-#include <GLFW/glfw3.h>
 
 void waitEvents() {
   glfwWaitEvents();
@@ -229,15 +231,112 @@ bool Screenshot$update(Screenshot* cm) {
   return Screenshot$setImage(cm, img);
 }
 
+static bool useAntialiasedFramebuffer = true;
+static PFNGLTEXIMAGE2DMULTISAMPLEPROC glTexImage2DMultisample = NULL;
+static PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers = NULL;
+static PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer = NULL;
+static PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D = NULL;
+static PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers = NULL;
+static PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer = NULL;
+static PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC glRenderbufferStorageMultisample = NULL;
+static PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer = NULL;
+static PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus = NULL;
+static PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer = NULL;
+static void loadGlExtentions() {
+  if (useAntialiasedFramebuffer == false) return;
+
+  glTexImage2DMultisample = (void*)glfwGetProcAddress("glTexImage2DMultisample");
+  glGenFramebuffers = (void*)glfwGetProcAddress("glGenFramebuffers");
+  glBindFramebuffer = (void*)glfwGetProcAddress("glBindFramebuffer");
+  glFramebufferTexture2D = (void*)glfwGetProcAddress("glFramebufferTexture2D");
+  glGenRenderbuffers = (void*)glfwGetProcAddress("glGenRenderbuffers");
+  glBindRenderbuffer = (void*)glfwGetProcAddress("glBindRenderbuffer");
+  glRenderbufferStorageMultisample = (void*)glfwGetProcAddress("glRenderbufferStorageMultisample");
+  glFramebufferRenderbuffer = (void*)glfwGetProcAddress("glFramebufferRenderbuffer");
+  glCheckFramebufferStatus = (void*)glfwGetProcAddress("glCheckFramebufferStatus");
+  glBlitFramebuffer = (void*)glfwGetProcAddress("glBlitFramebuffer");
+
+  if (glTexImage2DMultisample == NULL) useAntialiasedFramebuffer = false;
+}
+
+// https://stackoverflow.com/questions/50933777/
+static RenderTexture generateAntialiasedFramebuffer(int width, int height) {
+  unsigned int framebuffer;
+  glGenFramebuffers(1, &framebuffer);
+  glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+  // create a multisampled color attachment texture
+  unsigned int textureColorBufferMultiSampled;
+  glGenTextures(1, &textureColorBufferMultiSampled);
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled);
+  glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA, width, height, GL_TRUE);
+  glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled, 0);
+
+  // create a (also multisampled) renderbuffer object for depth and stencil attachments
+  unsigned int rbo;
+  glGenRenderbuffers(1, &rbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+  glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, width, height);
+  glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+  assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  // configure second post-processing framebuffer
+  unsigned int intermediateFBO;
+  glGenFramebuffers(1, &intermediateFBO);
+  glBindFramebuffer(GL_FRAMEBUFFER, intermediateFBO);
+  // create a color attachment texture
+  unsigned int screenTexture;
+  glGenTextures(1, &screenTexture);
+  glBindTexture(GL_TEXTURE_2D, screenTexture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexture, 0);    // we only need a color buffer
+  assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  return (RenderTexture){
+    .id = framebuffer,
+    .texture = {
+      .id = screenTexture,
+      .height = height,
+      .width = width,
+      .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8,
+    },
+    .depth = {
+      .id = intermediateFBO,
+    },
+  };
+}
+
+static void blitAntialiasedFramebuffer(int width, int height, int framebuffer, int intermediateFBO) {
+  glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFBO);
+  glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void Screenshot$begin(Screenshot* cm) {
   if (cm->renderTexture.id == 0) {
-    cm->renderTexture = LoadRenderTexture(cm->width, cm->height);
+    if (glTexImage2DMultisample == NULL) loadGlExtentions();
+    if (useAntialiasedFramebuffer) {
+      cm->renderTexture = generateAntialiasedFramebuffer(cm->width, cm->height);
+    } else {
+      cm->renderTexture = LoadRenderTexture(cm->width, cm->height);
+    }
   }
   BeginTextureMode(cm->renderTexture);
 }
 
 bool Screenshot$end(Screenshot* cm, char* name) {
   EndTextureMode();
+  if (useAntialiasedFramebuffer) {
+    blitAntialiasedFramebuffer(cm->width, cm->height, cm->renderTexture.id, cm->renderTexture.depth.id);
+  }
   Image img = LoadImageFromTexture(cm->renderTexture.texture);
   ImageFlipVertical(&img);
 

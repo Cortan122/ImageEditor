@@ -1,6 +1,6 @@
 # this is a weird makefile that doesnt use .o files
 
-LDFLAGS=-lraylib -lm -lglfw
+LDFLAGS=-lraylib -lm -lglfw -lGL
 WINLDFLAGS=-lmsvcrt -lopengl32 -lgdi32 -lkernel32 -lshell32 -luser32 -lraylib -Wl,-subsystem=gui
 WARNINGS=-Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function
 CFLAGS=-fdollars-in-identifiers -funsigned-char $(WARNINGS) -Werror=vla
