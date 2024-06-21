@@ -2,6 +2,7 @@
 
 #include <raymath.h>
 #include <stdlib.h>
+#include "config.h"
 
 const Color CropRectangle_color = {0, 0, 0, 102};
 
@@ -141,7 +142,7 @@ Drawable CropRectangle$New(Canvas* c) {
 
   CropRectangle* self = calloc(1, sizeof(CropRectangle));
   self->parentCanvas = c;
-  self->frameColor = c ? DARKGREEN : SKYBLUE;
+  self->frameColor = c ? DEFAULT_CROP_COLOR : DEFAULT_BOX_COLOR;
   Drawable res = DRAWABLE(self, CropRectangle);
   if (c == NULL) res.name = "Box";
   return res;

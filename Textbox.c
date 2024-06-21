@@ -8,6 +8,7 @@
 
 #include "resource_loader.h"
 #include "stretchy_buffer.h"
+#include "config.h"
 
 double keyTypingRom[400];
 const double keyRepeatDelay = .500;
@@ -40,8 +41,8 @@ void Textbox$init(Textbox* textbox) {
   textbox->cursorPos = 0;
   textbox->pos = (Vector2){0, 0};
 
-  textbox->cursorColor = RED;
-  textbox->textColor = DARKGREEN;
+  textbox->cursorColor = DEFAULT_CURSOR_COLOR;
+  textbox->textColor = DEFAULT_TEXT_COLOR;
   textbox->font = GetFont(1);
   textbox->fontSize = 2;
   textbox->showCursor = true;

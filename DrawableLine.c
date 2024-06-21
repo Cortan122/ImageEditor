@@ -3,6 +3,7 @@
 #include <raymath.h>
 #include <string.h>
 
+#include "config.h"
 #include "BezierCurve.h"
 
 #define nfree(x) \
@@ -21,7 +22,7 @@ void DrawableLine$_init(DrawableLine* dl) {
   dl->error = 10;
   dl->thickness = 2;
   dl->subdivisions = 30;
-  dl->color = RED;
+  dl->color = DEFAULT_LINE_COLOR;
 }
 
 void DrawableLine$add(DrawableLine* dl, Vector2 point) {

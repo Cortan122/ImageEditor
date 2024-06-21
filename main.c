@@ -5,6 +5,7 @@
 
 #include "Canvas.h"
 #include "Textbox.h"
+#include "config.h"
 
 void drawAlignedText(const char* text, int ypos, int fontsize, int aligment, Color c) {
   if (text == NULL) return;
@@ -375,11 +376,11 @@ void Editor$Update(Editor* ed) {
 }
 
 int main(int argc, char** argv) {
-  const int screenWidth = 1000;
-  const int screenHeight = 600;
+  const int screenWidth = DEFAULT_SCREENWIDTH;
+  const int screenHeight = DEFAULT_SCREENHEIGHT;
   SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
-  InitWindow(screenWidth, screenHeight, "raylib image editor");
-  SetWindowMinSize(300, 300);
+  InitWindow(screenWidth, screenHeight, WINDOW_TITLE);
+  SetWindowMinSize(MINSIZE_WIDTH, MINSIZE_HEIGHT);
   SetTargetFPS(60);
   SetExitKey(0);
   EnableEventWaiting(); // now the fps counter is scuffed

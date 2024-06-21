@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <rlgl.h>
 #include <assert.h>
+#include "config.h"
 
 #ifdef _WIN32
 #define Rectangle Rectangle_winapi
@@ -231,7 +232,7 @@ bool Screenshot$update(Screenshot* cm) {
   return Screenshot$setImage(cm, img);
 }
 
-static bool useAntialiasedFramebuffer = true;
+static bool useAntialiasedFramebuffer = AA_FRAMEBUFFER;
 static PFNGLTEXIMAGE2DMULTISAMPLEPROC glTexImage2DMultisample = NULL;
 static PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers = NULL;
 static PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer = NULL;
