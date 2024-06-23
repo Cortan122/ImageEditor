@@ -403,6 +403,7 @@ int main(int argc, char** argv) {
   }
   Canvas$copy(&theEditor.canvas, NULL);
   Canvas$Delete(&theEditor.canvas);
+  Textbox$Delete(&theEditor.inputField);
 
   CloseWindow();
   return 0;

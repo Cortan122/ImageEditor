@@ -1,6 +1,7 @@
 # Raylib Image Editor
 
 This is a project i wrote for my 2020/2021 coursework at my old university, but now i'm trying to use it on linux as my screenshot editor.
+Some comments are in russian, sorry ☹️
 
 There are some memory leaks that i haven't fixed yet, apparently...
 
@@ -20,6 +21,17 @@ $ sudo pacman -S raylib xclip imagemagick
 `xclip` and `imagemagick` (specifically `import`) are used for taking screenshots on x11, because i couldn't be bothered to implement it manually.
 
 To compile this on windows, if it still even works there, you'll need `tcc.exe`.
+The windows compilation is currently very broken, i suggest you use the v1.0 commit with raylib 3.5.
+
+### Some additional make dependencies
+
+Those are mostly common sense coreutils.
+
+* gnu make
+* xxd
+* find
+* akw
+* a C compiler that supports the `-MMD` option
 
 ## Build & Run
 
