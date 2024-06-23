@@ -1,52 +1,52 @@
 [
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./BezierCurve-g.o BezierCurve.c",
-    "file": "BezierCurve.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/BezierCurve-g.o src/BezierCurve.c",
+    "file": "src/BezierCurve.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./Canvas-g.o Canvas.c",
-    "file": "Canvas.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/Canvas-g.o src/Canvas.c",
+    "file": "src/Canvas.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./CropRectangle-g.o CropRectangle.c",
-    "file": "CropRectangle.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/CropRectangle-g.o src/CropRectangle.c",
+    "file": "src/CropRectangle.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./Drawable-g.o Drawable.c",
-    "file": "Drawable.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/Drawable-g.o src/Drawable.c",
+    "file": "src/Drawable.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./DrawableLine-g.o DrawableLine.c",
-    "file": "DrawableLine.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/DrawableLine-g.o src/DrawableLine.c",
+    "file": "src/DrawableLine.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./FloatingImage-g.o FloatingImage.c",
-    "file": "FloatingImage.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/FloatingImage-g.o src/FloatingImage.c",
+    "file": "src/FloatingImage.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./main-g.o main.c",
-    "file": "main.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/main-g.o src/main.c",
+    "file": "src/main.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./resource_loader-g.o resource_loader.c",
-    "file": "resource_loader.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/resource_loader-g.o src/resource_loader.c",
+    "file": "src/resource_loader.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./Screenshot-g.o Screenshot.c",
-    "file": "Screenshot.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/Screenshot-g.o src/Screenshot.c",
+    "file": "src/Screenshot.c"
   },
   {
     "directory": "/home/green/Programs/ImageEditor",
-    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./Textbox-g.o Textbox.c",
-    "file": "Textbox.c"
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/src/Textbox-g.o src/Textbox.c",
+    "file": "src/Textbox.c"
   }
 ]

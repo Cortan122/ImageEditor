@@ -30,7 +30,7 @@ $(TARGETS): $(EXECUTABLE)
 $(OBJS): makefile
 MAKEFLAGS += -j4
 
-OBJS:=$(filter-out $(BUILD_DIR)/./resources$(OBJ_EXT).o, $(OBJS))
+OBJS:=$(filter-out $(BUILD_DIR)/src/resources$(OBJ_EXT).o, $(OBJS))
 $(OBJS): $(BUILD_DIR)/resources.h
 RESOURCES = $(wildcard resources/*.*)
 $(BUILD_DIR)/resources.c: $(RESOURCES)
