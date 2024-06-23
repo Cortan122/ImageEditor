@@ -1,0 +1,52 @@
+[
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./BezierCurve-g.o BezierCurve.c",
+    "file": "BezierCurve.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./Canvas-g.o Canvas.c",
+    "file": "Canvas.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./CropRectangle-g.o CropRectangle.c",
+    "file": "CropRectangle.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./Drawable-g.o Drawable.c",
+    "file": "Drawable.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./DrawableLine-g.o DrawableLine.c",
+    "file": "DrawableLine.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./FloatingImage-g.o FloatingImage.c",
+    "file": "FloatingImage.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./main-g.o main.c",
+    "file": "main.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./resource_loader-g.o resource_loader.c",
+    "file": "resource_loader.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./Screenshot-g.o Screenshot.c",
+    "file": "Screenshot.c"
+  },
+  {
+    "directory": "/home/green/Programs/ImageEditor",
+    "command": "clang -Iexternal/ -Ibuild/ -MMD -fdollars-in-identifiers -funsigned-char -Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Werror=vla -Og -g -fsanitize=address -c -o build/./Textbox-g.o Textbox.c",
+    "file": "Textbox.c"
+  }
+]
