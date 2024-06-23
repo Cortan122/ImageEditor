@@ -266,15 +266,19 @@ void Editor$Draw(Editor* ed) {
     drawAlignedText("--help", 20, 40, 0, DARKGRAY);
     int fontsize = 4;
     char* text =
-        "wasd - pan image\n"
+        "wasd | middle click - pan image\n"
         "left click - draw lines\n"
         "right click - add text\n"
         "ctrl+c/v/s - copy/paste/save\n"
-        "x - crop\n"
-        "b - box\n"
-        "c - color picker\n"
-        "p - toggle pixelatedness\n"
-        "ctrl+p - take screenshot";
+        "ctrl+p | L - take screenshot\n"
+        // "+/-/PgUp/PgDn - zoom\n"
+        "Home | R - reset zoom\n"
+        "X - crop\n"
+        "B - box\n"
+        "C - color picker\n"
+        "P - toggle pixelatedness\n"
+        // "F1 | H - this help menu\n"
+        "F5 | ctrl+v - reload everything";
     SetTextLineSpacing(10);  // i have no idea why this works
     Vector2 measure = MeasureTextEx(GetFontDefault(), text, 10 * fontsize, fontsize);
     drawAlignedText(text, -GetScreenHeight() / 2 - measure.y / 2 + 10 * fontsize, 10 * fontsize, 0, DARKGRAY);
