@@ -1,53 +1,69 @@
-# this is a weird makefile that doesnt use .o files
+BUILD_DIR=build
+SRC_DIRS=./ src/ external/
 
-LDFLAGS=-lraylib -lm -lglfw -lGL
-WINLDFLAGS=-lmsvcrt -lopengl32 -lgdi32 -lkernel32 -lshell32 -luser32 -lraylib -Wl,-subsystem=gui
+LDLIBS=-lraylib -lm -lglfw -lGL
 WARNINGS=-Wall -Wextra -Wno-parentheses -Wno-unused-value -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function
-CFLAGS=-fdollars-in-identifiers -funsigned-char $(WARNINGS) -Werror=vla
+CFLAGS=-MMD -fdollars-in-identifiers -funsigned-char $(WARNINGS) -Werror=vla
+CPPFLAGS=-Iexternal/ -I$(BUILD_DIR)/
 EXENAME=main
 
-DRAWABLES = $(filter-out resources.c, $(wildcard *.c))
+TARGETS=install debug
+ifeq "$(MAKECMDGOALS)" "install"
+  OBJ_EXT=-O
+  CFLAGS += -O3 -DNDEBUG
+else # ifeq "$(MAKECMDGOALS)" "debug"
+  OBJ_EXT=-g
+  CFLAGS += -Og -g -fsanitize=address
+  LDFLAGS += -fsanitize=address
+endif
+
+EXECUTABLE_SYMLINK=$(EXENAME)
+EXECUTABLE=$(BUILD_DIR)/$(EXENAME)$(OBJ_EXT)
+SRC_EXTS=c cpp
+SRC_FILES=$(foreach dir, $(SRC_DIRS), $(foreach ext, $(SRC_EXTS), $(wildcard $(dir)*.$(ext))))
+OBJS=$(foreach ext, $(SRC_EXTS), $(patsubst %.$(ext), $(BUILD_DIR)/%$(OBJ_EXT).o, $(filter %.$(ext), $(SRC_FILES))))
+
+DEFAULT_TARGET=debug
+.PHONY: clean $(TARGETS) default
+default: $(DEFAULT_TARGET)
+$(TARGETS): $(EXECUTABLE)
+$(OBJS): makefile
+MAKEFLAGS += -j4
+
+OBJS:=$(filter-out $(BUILD_DIR)/./resources$(OBJ_EXT).o, $(OBJS))
+$(OBJS): $(BUILD_DIR)/resources.h
 RESOURCES = $(wildcard resources/*.*)
-
-debug: $(EXENAME)
-all: $(EXENAME)
-allexe: $(EXENAME).exe
-
-debug: CFLAGS += -g -O0 -fsanitize=address # -fanalyzer
-install: CFLAGS += -O3 -DNO_DEBUG
-
-resource_loader.c: stretchy_buffer.h resources.c resources.h
-$(DRAWABLES): $(wildcard *.h)
-$(EXENAME) $(EXENAME).exe: $(DRAWABLES)
-
-resources.c: $(RESOURCES)
+$(BUILD_DIR)/resources.c: $(RESOURCES)
+	@mkdir -p $$(dirname $@)
 	find $^ -exec xxd -i {} \; > $@
 
-resources.h: resources.c
+$(BUILD_DIR)/resources.h: $(BUILD_DIR)/resources.c
+	@mkdir -p $$(dirname $@)
 	./cproto.sh $< > $@
 
-resource_loader.c:
-	touch $@
+-include $(OBJS:.o=.d)
 
-%.exe: %.c
-	tcc.exe $(CFLAGS) $(WINLDFLAGS) -o $@ $^
+$(BUILD_DIR)/%$(OBJ_EXT).o: %.c
+	@mkdir -p $$(dirname $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
-stretchy_buffer.h:
-	curl --silent -O https://raw.githubusercontent.com/nothings/stb/master/deprecated/stretchy_buffer.h
+$(EXECUTABLE): $(OBJS)
+	$(CC) $(LDFLAGS) $(OBJS) $(LDLIBS) -o $@
 
-run: all
+debug: $(EXECUTABLE)
+	ln -sf $(EXECUTABLE) $(EXECUTABLE_SYMLINK)
+
+install: $(EXECUTABLE)
+	install -D $(EXECUTABLE) /usr/local/bin/raylid
+
+run: debug
 	./$(EXENAME)
 
-runexe: allexe
-	./$(EXENAME).exe
-
 clean:
-	rm -f *.o *.exe $(EXENAME) stretchy_buffer.h resources.c resources.h demo.zip
+	rm -rf $(BUILD_DIR) $(EXENAME) .cache/ *.o *.exe stretchy_buffer.h resources.c resources.h demo.zip
 
-install: $(EXENAME)
-	install -D $(EXENAME) /usr/local/bin/raylid
-
-demo.zip: allexe
-	# strip.exe $(EXENAME).exe
-	zip -j demo.zip $(EXENAME).exe $$(which raylib.dll)
-	cp demo.zip ~/Downloads/demo.zip.txt
+# TODO: fix windows compilation
+WINLDFLAGS=-lmsvcrt -lopengl32 -lgdi32 -lkernel32 -lshell32 -luser32 -lraylib -Wl,-subsystem=gui
+$(EXENAME).$(TARGETS): $(wildcard *.c)
+%.exe: %.c
+	tcc.exe $(CFLAGS) $(WINLDFLAGS) -o $@ $^

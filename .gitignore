@@ -4,5 +4,7 @@
 main
 resources.c
 resources.h
-stretchy_buffer.h
+/stretchy_buffer.h
 demo.zip
+build/
+.cache/
