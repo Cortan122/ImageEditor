@@ -54,3 +54,7 @@ Press <kbd>F1</kbd> inside the editor to get it to display (most) of the control
 ## Configuration
 
 You can change some values in `config.h` and then recompile the program.
+
+## Bugs
+
+- [ ] When cropping an image open as a file, the program segfaults

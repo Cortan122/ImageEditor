@@ -10,6 +10,7 @@
 #include "FloatingImage.h"
 #include "Screenshot.h"
 #include "Textbox.h"
+#include "config.h"
 #include "resource_loader.h"
 #include "stretchy_buffer.h"
 
@@ -77,8 +78,7 @@ void Canvas$updateSize(Canvas* c) {
 
 void Canvas$reload(Canvas* c, bool checkClipboard) {
   if (checkClipboard) {
-    while (Canvas$popDrawable(c))
-      ;
+    while (Canvas$popDrawable(c));
     Screenshot$update(&c->screenshot);
   }
 
@@ -256,6 +256,8 @@ void Canvas$Draw(Canvas* c) {
 }
 
 bool Canvas$loadImage(Canvas* c, char* file) {
+  c->nearestNeighborToggle = SMOOTH_SCALE_BY_DEFAULT;
+
   bool res = true;
   if (file) {
     Image image = LoadImage(file);
@@ -263,6 +265,7 @@ bool Canvas$loadImage(Canvas* c, char* file) {
     UnloadImage(image);
   } else if (!Screenshot$update(&c->screenshot)) {
     Screenshot$setImage(&c->screenshot, LoadImageResource(nothing_png));
+    c->nearestNeighborToggle = false;
   }
 
   Canvas$reload(c, false);

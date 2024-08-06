@@ -8,6 +8,7 @@
 #define MINSIZE_HEIGHT 300
 #define WINDOW_TITLE "raylib image editor"
 #define AA_FRAMEBUFFER true
+#define SMOOTH_SCALE_BY_DEFAULT true
 
 #define DEFAULT_BOX_COLOR SKYBLUE
 #define DEFAULT_CROP_COLOR DARKGREEN
