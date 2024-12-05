@@ -17,7 +17,7 @@ const double keyRepeatRate = 1. / 31;
 bool IsKeyTyped(int key) {
   // IsKeyDown on wsl always returns 1 for some reason
   // or is it...?
-  // then if IsKeyDown() == 0 we know for sure the key isnt down (?)
+  // then if IsKeyDown() == 0 we know for sure the key isn't down (?)
   if (!IsKeyDown(key)) keyTypingRom[key] = 0;
 
   if (IsKeyPressed(key)) {

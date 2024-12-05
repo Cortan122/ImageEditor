@@ -128,6 +128,30 @@ void Canvas$updateDrawable(Canvas* c) {
   SetMouseScale(1, 1);
 }
 
+Vector2 Canvas$getMousePosition(Canvas* c) {
+  Vector2 realpos = Vector2Add(c->marginTopLeft, c->pos);
+  SetMouseOffset(-realpos.x, -realpos.y);
+  SetMouseScale(1 / c->scale, 1 / c->scale);
+  Vector2 pos = GetMousePosition();
+  SetMouseOffset(0, 0);
+  SetMouseScale(1, 1);
+  return pos;
+}
+
+Color Canvas$getColorUnderMouse(Canvas* c, bool* is_some) {
+  Vector2 mousePos = Canvas$getMousePosition(c);
+  int x = roundf(mousePos.x);
+  int y = roundf(mousePos.y);
+
+  Image image = c->screenshot.image;
+  if ((x >= 0) && (x < image.width) && (y >= 0) && (y < image.height)) {
+    *is_some = true;
+    return GetImageColor(image, x, y);
+  }
+  *is_some = false;
+  return (Color){0};
+}
+
 void Canvas$takeScreenshot(Canvas* c) {
   takeScreenshot();
   c->scheduledReload = true;

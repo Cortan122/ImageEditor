@@ -7,18 +7,18 @@
 #include "Textbox.h"
 #include "config.h"
 
-void drawAlignedText(const char* text, int ypos, int fontsize, int aligment, Color c) {
+void drawAlignedText(const char* text, int ypos, int fontsize, int alignment, Color c) {
   if (text == NULL) return;
 
   SetTextLineSpacing(fontsize);
   int measure = MeasureText(text, fontsize);
   int xpos = 0;
-  if (aligment == 0) {
+  if (alignment == 0) {
     xpos = GetScreenWidth() / 2 - measure / 2;
-  } else if (aligment < 0) {
-    xpos = GetScreenWidth() - measure + aligment;
-  } else if (aligment > 0) {
-    xpos = aligment;
+  } else if (alignment < 0) {
+    xpos = GetScreenWidth() - measure + alignment;
+  } else if (alignment > 0) {
+    xpos = alignment;
   }
 
   if (ypos < 0) ypos = GetScreenHeight() + ypos - fontsize + 2;
@@ -51,6 +51,8 @@ typedef struct Editor {
   Textbox inputField;
   bool ioError;
   Rectangle buttonRect;
+
+  float colorPickerPopupTimer;
 } Editor;
 
 ColorBlob colorRom[] = {
@@ -144,12 +146,12 @@ void drawFramedTextbox(Textbox* textbox) {
   int ypos = (GetScreenHeight() - height) / 2;
   DrawRectangleLinesEx((Rectangle){margin, ypos, width, height}, 4, DARKGRAY);
 
-  int mesure = Textbox$measureText(textbox).x;
+  int measure = Textbox$measureText(textbox).x;
   textbox->pos = (Vector2){margin + 15, ypos + 8};
-  if (mesure > width - 32) {
-    int mesure2 = Textbox$partialMeasureText(textbox).x;
-    int pos1 = mesure - (width - 32);
-    int pos2 = mesure2 - (width - 32) / 2;
+  if (measure > width - 32) {
+    int measure2 = Textbox$partialMeasureText(textbox).x;
+    int pos1 = measure - (width - 32);
+    int pos2 = measure2 - (width - 32) / 2;
     textbox->pos.x -= fmaxf(0, fminf(pos1, pos2));
   }
 
@@ -217,33 +219,62 @@ bool Editor$open(Editor* ed, char* filename) {
   return res;
 }
 
+// Note: the returned pointer has a very short lifetime
+const char* getColorHexcode(Color c) {
+  return TextFormat("#%02X%02X%02X", c.r, c.g, c.b);
+}
+
+void Editor$DrawColorPicker(Editor* ed) {
+  Rectangle colorRect = {2, 2, 16, 16};
+  DrawTexture(ed->canvas.transparencyTexture, colorRect.x, colorRect.y, DARKGRAY);
+
+  bool is_some;
+  Color pickedColor = Canvas$getColorUnderMouse(&ed->canvas, &is_some);
+  const char* hexcode = "#??????";
+  if (is_some) {
+    DrawRectangleRec(colorRect, pickedColor);
+    hexcode = getColorHexcode(pickedColor);
+  }
+
+  if (ed->colorPickerPopupTimer > 0.0f) {
+    hexcode = "Copied!!";
+  }
+
+  DrawText(hexcode, 20, 1, 20, DARKGRAY);
+}
+
+void Editor$DrawUIBars(Editor* ed) {
+  if (ENABLE_FPS_COUNTER) {
+    DrawText(TextFormat("%2i FPS", GetFPS()), 3, 1, 20, DARKGRAY);
+  } else {
+    Editor$DrawColorPicker(ed);
+  }
+
+  drawAlignedText("color:   ", 1, 20, -3, DARKGRAY);
+  Rectangle colorRect = {GetScreenWidth() - 18, 2, 16, 16};
+  DrawTexture(ed->canvas.transparencyTexture, colorRect.x, colorRect.y, DARKGRAY);
+  DrawRectangleRec(colorRect, ed->canvas.color);
+
+  const char* sizeIndicator =
+      TextFormat("%dx%d %.0f%%", ed->canvas.texture.width, ed->canvas.texture.height, ed->canvas.scale * 100);
+  drawAlignedText(sizeIndicator, -1, 20, -3, DARKGRAY);
+
+  drawAlignedText(ed->filename ? GetFileName(ed->filename) : "No open file", -1, 20, 3, DARKGRAY);
+
+  drawAlignedText(TextFormat("%dx%d", GetScreenWidth(), GetScreenHeight()), 1, 20, 0, DARKGRAY);
+
+  if (ed->canvas.isActive) {
+    drawAlignedText(sb_last(ed->canvas.drawables).name, -1, 20, 0, DARKGRAY);
+  } else {
+    drawAlignedText(TextFormat("%d things", sb_count(ed->canvas.drawables)), -1, 20, 0, DARKGRAY);
+  }
+}
+
 void Editor$Draw(Editor* ed) {
   ClearBackground(RAYWHITE);
   if (ed->mode == UIMODE_NORMAL) {
     Canvas$Draw(&ed->canvas);
-
-    if (ed->canvas.marginTopLeft.y) {
-      DrawText(TextFormat("%2i FPS", GetFPS()), 3, 1, 20, DARKGRAY);
-
-      drawAlignedText("color:   ", 1, 20, -3, DARKGRAY);
-      Rectangle colorRect = {GetScreenWidth() - 18, 2, 16, 16};
-      DrawTexture(ed->canvas.transparencyTexture, colorRect.x, colorRect.y, DARKGRAY);
-      DrawRectangleRec(colorRect, ed->canvas.color);
-
-      const char* sizeIndicator =
-          TextFormat("%dx%d %.0f%%", ed->canvas.texture.width, ed->canvas.texture.height, ed->canvas.scale * 100);
-      drawAlignedText(sizeIndicator, -1, 20, -3, DARKGRAY);
-
-      drawAlignedText(ed->filename ? GetFileName(ed->filename) : "No open file", -1, 20, 3, DARKGRAY);
-
-      drawAlignedText(TextFormat("%dx%d", GetScreenWidth(), GetScreenHeight()), 1, 20, 0, DARKGRAY);
-
-      if (ed->canvas.isActive) {
-        drawAlignedText(sb_last(ed->canvas.drawables).name, -1, 20, 0, DARKGRAY);
-      } else {
-        drawAlignedText(TextFormat("%d things", sb_count(ed->canvas.drawables)), -1, 20, 0, DARKGRAY);
-      }
-    }
+    if (ed->canvas.marginTopLeft.y) Editor$DrawUIBars(ed);
   } else if (ed->mode == UIMODE_COLOR_PALETTE) {
     drawAlignedText("Color palette", 20, 40, 0, DARKGRAY);
 
@@ -277,7 +308,9 @@ void Editor$Draw(Editor* ed) {
         "B - box\n"
         "C - color picker\n"
         "P - toggle pixelatedness\n"
+        // "Q - copy pipette color\n"
         // "F1 | H - this help menu\n"
+        // "F2 - toggle ui\n"
         "F5 | ctrl+v - reload everything";
     SetTextLineSpacing(10);  // i have no idea why this works
     Vector2 measure = MeasureTextEx(GetFontDefault(), text, 10 * fontsize, fontsize);
@@ -292,6 +325,10 @@ void Editor$Update(Editor* ed) {
   bool isctrl = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
   bool isshift = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
   if (IsKeyPressed(KEY_F2)) Editor$toggleUi(ed);
+
+  if (ed->colorPickerPopupTimer > 0.0f) {
+    ed->colorPickerPopupTimer -= GetFrameTime();
+  }
 
   if (isctrl && IsKeyPressed(KEY_S)) {
     if (isshift || ed->filename == NULL) {
@@ -314,6 +351,16 @@ void Editor$Update(Editor* ed) {
     }
 
     if (!isctrl && IsKeyPressed(KEY_C) && !ed->canvas.isActive) Editor$setMode(ed, UIMODE_COLOR_PALETTE);
+
+    if (IsKeyPressed(KEY_Q)) {
+      bool is_some;
+      Color pickedColor = Canvas$getColorUnderMouse(&ed->canvas, &is_some);
+      if (is_some) {
+        SetClipboardText(getColorHexcode(pickedColor));
+        Canvas$SetColor(&ed->canvas, pickedColor);
+        ed->colorPickerPopupTimer = 1.0f;
+      }
+    }
 
     if (ed->mode == UIMODE_NORMAL) Canvas$Update(&ed->canvas);
   } else if (ed->mode == UIMODE_COLOR_PALETTE) {

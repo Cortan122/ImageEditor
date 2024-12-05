@@ -44,3 +44,6 @@ void Canvas$Draw(Canvas* c);
 void Canvas$Delete(Canvas* c);
 bool Canvas$loadImage(Canvas* c, char* file);
 void Canvas$SetColor(Canvas* c, Color color);
+
+Vector2 Canvas$getMousePosition(Canvas* c);
+Color Canvas$getColorUnderMouse(Canvas* c, bool* is_some);

@@ -9,6 +9,7 @@
 #define WINDOW_TITLE "raylib image editor"
 #define AA_FRAMEBUFFER true
 #define SMOOTH_SCALE_BY_DEFAULT true
+#define ENABLE_FPS_COUNTER false
 
 #define DEFAULT_BOX_COLOR SKYBLUE
 #define DEFAULT_CROP_COLOR DARKGREEN
