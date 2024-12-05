@@ -262,7 +262,7 @@ bool Canvas$loadImage(Canvas* c, char* file) {
   if (file) {
     Image image = LoadImage(file);
     res = Screenshot$setImage(&c->screenshot, image);
-    UnloadImage(image);
+    // Note: the Screenshot$setImage functions takes ownership of our image, so we don't have to unload it here
   } else if (!Screenshot$update(&c->screenshot)) {
     Screenshot$setImage(&c->screenshot, LoadImageResource(nothing_png));
     c->nearestNeighborToggle = false;

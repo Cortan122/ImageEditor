@@ -57,4 +57,4 @@ You can change some values in `config.h` and then recompile the program.
 
 ## Bugs
 
-- [ ] When cropping an image open as a file, the program segfaults
+- [x] When cropping an image open as a file, the program segfaults
