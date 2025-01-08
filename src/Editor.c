@@ -10,7 +10,7 @@
 void drawAlignedText(const char* text, int ypos, int fontsize, int alignment, Color c) {
   if (text == NULL) return;
 
-  SetTextLineSpacing(fontsize);
+  SetTextLineSpacing(0);
   int measure = MeasureText(text, fontsize);
   int xpos = 0;
   if (alignment == 0) {
@@ -287,11 +287,11 @@ void Editor$Draw(Editor* ed) {
         "B - box\n"
         "C - color picker\n"
         "P - toggle pixelatedness\n"
-        // "Q - copy pipette color\n"
+        "Q - copy pipette color\n"
         // "F1 | H - this help menu\n"
         // "F2 - toggle ui\n"
         "F5 | ctrl+v - reload everything";
-    SetTextLineSpacing(10);  // i have no idea why this works
+    SetTextLineSpacing(0);  // i have no idea why this works
     Vector2 measure = MeasureTextEx(GetFontDefault(), text, 10 * fontsize, fontsize);
     drawAlignedText(text, -GetScreenHeight() / 2 - measure.y / 2 + 10 * fontsize, 10 * fontsize, 0, DARKGRAY);
   }
