@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 #include <assert.h>
+#include <raylib.h>
 #include <rlgl.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -243,8 +244,14 @@ static PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC glRenderbufferStorageMultisample 
 static PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer = NULL;
 static PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus = NULL;
 static PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer = NULL;
-static void loadGlExtentions() {
+static void loadGlExtensions() {
   if (useAntialiasedFramebuffer == false) return;
+
+  // note: this doesn't work, because the functions get loaded from a different context, i guess
+  // glfwInit();
+  // glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+  // GLFWwindow* offscreen_context = glfwCreateWindow(640, 480, "", NULL, NULL);
+  // glfwMakeContextCurrent(offscreen_context);
 
   glTexImage2DMultisample = (void*)glfwGetProcAddress("glTexImage2DMultisample");
   glGenFramebuffers = (void*)glfwGetProcAddress("glGenFramebuffers");
@@ -257,9 +264,20 @@ static void loadGlExtentions() {
   glCheckFramebufferStatus = (void*)glfwGetProcAddress("glCheckFramebufferStatus");
   glBlitFramebuffer = (void*)glfwGetProcAddress("glBlitFramebuffer");
 
-  if (glTexImage2DMultisample == NULL) useAntialiasedFramebuffer = false;
+  if (glTexImage2DMultisample == NULL) {
+    useAntialiasedFramebuffer = false;
+    TraceLog(LOG_WARNING, "GL: Couldn't load glTexImage2DMultisample extention");
+
+    const char* description;
+    int code = glfwGetError(&description);
+    if (code != GLFW_NO_ERROR) {
+      TraceLog(LOG_INFO, "inner glfw erorr: %s", description);
+    }
+  }
 }
 
+// TODO: i think a raylib update broke this
+//       did it even used to work?
 // https://stackoverflow.com/questions/50933777/
 static RenderTexture generateAntialiasedFramebuffer(int width, int height) {
   unsigned int framebuffer;
@@ -323,7 +341,7 @@ static void blitAntialiasedFramebuffer(int width, int height, int framebuffer, i
 
 void Screenshot$begin(Screenshot* cm) {
   if (cm->renderTexture.id == 0) {
-    if (glTexImage2DMultisample == NULL) loadGlExtentions();
+    if (glTexImage2DMultisample == NULL) loadGlExtensions();
     if (useAntialiasedFramebuffer) {
       cm->renderTexture = generateAntialiasedFramebuffer(cm->width, cm->height);
     } else {
