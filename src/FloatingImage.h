@@ -19,3 +19,4 @@ void FloatingImage$Delete(FloatingImage* fi);
 void FloatingImage$Move(FloatingImage* fi, Vector2 delta);
 void FloatingImage$SetColor(FloatingImage* fi, Color color);
 Drawable FloatingImage$New(char* name);
+Drawable FloatingImage$NewFromClipboard();

@@ -169,7 +169,9 @@ void Canvas$keyboardShortcuts(Canvas* c) {
   }
 
   if (IsKeyTyped(KEY_L)) Canvas$takeScreenshot(c);
-  if (isctrl && IsKeyTyped(KEY_V)) Canvas$reload(c, true);
+  if (isctrl && IsKeyTyped(KEY_V)) {
+    Canvas$addDrawable(c, FloatingImage$NewFromClipboard());
+  }
 
   Vector2 delta = {0};
   if (!isctrl && IsKeyTyped(KEY_W) || IsKeyTyped(KEY_UP)) delta.y--;

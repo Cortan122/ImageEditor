@@ -1,8 +1,10 @@
 #include "FloatingImage.h"
 
 #include <math.h>
+#include <raylib.h>
 #include <raymath.h>
 #include <stdlib.h>
+#include "Screenshot.h"
 
 void FloatingImage$Draw(FloatingImage* fi) {
   DrawTextureEx(fi->texture, fi->pos, 0, fi->scale, WHITE);
@@ -57,6 +59,18 @@ void FloatingImage$SetColor(FloatingImage* fi, Color color) {
 Drawable FloatingImage$New(char* name) {
   FloatingImage* self = calloc(1, sizeof(FloatingImage));
   self->texture = LoadTexture(name);
+  self->frameColor = ORANGE;
+  self->scale = 1;
+  return DRAWABLE(self, FloatingImage);
+}
+
+Drawable FloatingImage$NewFromClipboard() {
+  FloatingImage* self = calloc(1, sizeof(FloatingImage));
+
+  Image img = getImageFromClipboard();
+  self->texture = LoadTextureFromImage(img);
+  UnloadImage(img);
+
   self->frameColor = ORANGE;
   self->scale = 1;
   return DRAWABLE(self, FloatingImage);
