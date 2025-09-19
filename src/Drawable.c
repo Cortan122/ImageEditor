@@ -1,5 +1,6 @@
 #include "Drawable.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 void Drawable$Draw(Drawable* drawable) {
@@ -22,6 +23,11 @@ void Drawable$Delete(Drawable* drawable) {
 void Drawable$Move(Drawable* drawable, Vector2 delta) {
   if (drawable->self == NULL) return;
   drawable->move(drawable->self, delta);
+}
+
+bool Drawable$InRectangle(Drawable* drawable, Rectangle rect) {
+  if (drawable->self == NULL) return false;
+  return drawable->inRectangle(drawable->self, rect);
 }
 
 void Drawable$SetColor(Drawable* drawable, Color color) {

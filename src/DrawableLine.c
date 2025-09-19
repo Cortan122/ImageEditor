@@ -1,5 +1,6 @@
 #include "DrawableLine.h"
 
+#include <raylib.h>
 #include <raymath.h>
 #include <string.h>
 
@@ -146,6 +147,14 @@ void DrawableLine$Move(DrawableLine* dl, Vector2 delta) {
     dl->line[i] = Vector2Add(dl->line[i], delta);
   }
   nfree(dl->triangleStrip);
+}
+
+bool DrawableLine$InRectangle(DrawableLine* dl, Rectangle rect) {
+  DrawableLine$_init(dl);
+  for (int i = 0; i < sb_count(dl->line); i++) {
+    if (CheckCollisionPointRec(dl->line[i], rect)) return true;
+  }
+  return false;
 }
 
 void DrawableLine$SetColor(DrawableLine* dl, Color color) {

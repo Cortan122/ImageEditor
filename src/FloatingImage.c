@@ -6,13 +6,15 @@
 #include <stdlib.h>
 #include "Screenshot.h"
 
+Rectangle FloatingImage$getRect(FloatingImage* fi) {
+  return (Rectangle){fi->pos.x, fi->pos.y, fi->texture.width * fi->scale, fi->texture.height * fi->scale};
+}
+
 void FloatingImage$Draw(FloatingImage* fi) {
   DrawTextureEx(fi->texture, fi->pos, 0, fi->scale, WHITE);
 
   if (!fi->isDone) {
-    DrawRectangleLinesEx(
-        (Rectangle){fi->pos.x, fi->pos.y, fi->texture.width * fi->scale, fi->texture.height * fi->scale}, 4,
-        fi->frameColor);
+    DrawRectangleLinesEx(FloatingImage$getRect(fi), 4, fi->frameColor);
   }
 }
 
@@ -50,6 +52,10 @@ void FloatingImage$Move(FloatingImage* fi, Vector2 delta) {
   fi->pos = Vector2Add(fi->pos, delta);
   fi->pos.x = roundf(fi->pos.x);
   fi->pos.y = roundf(fi->pos.y);
+}
+
+bool FloatingImage$InRectangle(FloatingImage* fi, Rectangle rect) {
+  return CheckCollisionRecs(rect, FloatingImage$getRect(fi));
 }
 
 void FloatingImage$SetColor(FloatingImage* fi, Color color) {

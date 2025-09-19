@@ -5,10 +5,12 @@
   (Drawable) {                                                                            \
     self, #type, (UpdateMethod)type##$Update, (Method)type##$Draw, (Method)type##$Delete, \
         (MoveMethod)type##$Move, (ColorMethod)type##$SetColor,                            \
+        (InRectangleMethod)type##$InRectangle,                                            \
   }
 
 typedef void (*Method)(void*);
 typedef void (*MoveMethod)(void*, Vector2);
+typedef bool (*InRectangleMethod)(void*, Rectangle);
 typedef void (*ColorMethod)(void*, Color);
 typedef bool (*UpdateMethod)(void*);
 
@@ -20,10 +22,12 @@ typedef struct Drawable {
   Method delete;
   MoveMethod move;
   ColorMethod setColor;
+  InRectangleMethod inRectangle;
 } Drawable;
 
 bool Drawable$Update(Drawable* drawable);
 void Drawable$Draw(Drawable* drawable);
 void Drawable$Delete(Drawable* drawable);
 void Drawable$Move(Drawable* drawable, Vector2 delta);
+bool Drawable$InRectangle(Drawable* drawable, Rectangle rect);
 void Drawable$SetColor(Drawable* drawable, Color color);

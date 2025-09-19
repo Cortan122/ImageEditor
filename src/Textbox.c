@@ -206,6 +206,10 @@ void Textbox$Move(Textbox* textbox, Vector2 delta) {
   textbox->pos.y = roundf(textbox->pos.y);
 }
 
+bool Textbox$InRectangle(Textbox* textbox, Rectangle rect) {
+  return CheckCollisionPointRec(textbox->pos, rect);
+}
+
 void Textbox$SetColor(Textbox* textbox, Color color) {
   textbox->textColor = color;
 }
