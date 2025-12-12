@@ -165,8 +165,14 @@ bool deleteTempFile() {
 Image getImageFromClipboard() {
   Image res = {0};
 
+  const char* command = "xclip -selection clipboard -t image/png -o > \"$tempfilename\"";
+  const char* session = getenv("XDG_SESSION_TYPE");
+  if (strcmp(session, "wayland") == 0) {
+    command = "wl-paste -t image/png > \"$tempfilename\"";
+  }
+
   if (createTempFile()) {
-    if (!system("xclip -selection clipboard -t image/png -o > \"$tempfilename\"")) {
+    if (!system(command)) {
       res = LoadImage(tempFileName);
     }
   }
@@ -178,9 +184,15 @@ Image getImageFromClipboard() {
 bool putImageToClipboard(Image image) {
   bool res = false;
 
+  const char* command = "xclip -selection clipboard -t image/png -i \"$tempfilename\"";
+  const char* session = getenv("XDG_SESSION_TYPE");
+  if (strcmp(session, "wayland") == 0) {
+    command = "wl-copy -t image/png < \"$tempfilename\"";
+  }
+
   if (createTempFile()) {
     if (ExportImage(image, tempFileName)) {
-      if (!system("xclip -selection clipboard -t image/png -i \"$tempfilename\"")) {
+      if (!system(command)) {
         res = true;
       }
     }
@@ -193,9 +205,16 @@ bool putImageToClipboard(Image image) {
 bool takeScreenshot() {
   bool res = false;
 
+  const char* command =
+    "import -window root \"$tempfilename\" && "
+    "xclip -selection clipboard -t image/png -i \"$tempfilename\"";
+  const char* session = getenv("XDG_SESSION_TYPE");
+  if (strcmp(session, "wayland") == 0) {
+    command = "grim - | wl-copy";
+  }
+
   if (createTempFile()) {
-    if (!system("import -window root \"$tempfilename\" && xclip -selection clipboard -t "
-                "image/png -i \"$tempfilename\"")) {
+    if (!system(command)) {
       res = true;
     }
   }
