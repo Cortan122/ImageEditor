@@ -248,7 +248,9 @@ bool Screenshot$update(Screenshot* cm) {
   double t1 = GetTime();
   Image img = getImageFromClipboard();
   double t2 = GetTime();
-  printf("getImageFromClipboard(%d) = %.2fms\n", img.data != NULL, (t2 - t1) * 1000);
+  if (t2 - t1 > 0.016) {
+    fprintf(stderr, "\x1b[90mINFO: getImageFromClipboard(%d) took %.2fms\x1b[0m\n", img.data != NULL, (t2 - t1) * 1000);
+  }
   return Screenshot$setImage(cm, img);
 }
 
@@ -366,7 +368,9 @@ bool Screenshot$end(Screenshot* cm, char* name) {
     res = putImageToClipboard(img);
     if (!res) res = putImageToClipboard(img);
     double t2 = GetTime();
-    printf("putImageToClipboard(%d) = %.2fms\n", res, (t2 - t1) * 1000);
+    if (t2 - t1 > 0.016) {
+      fprintf(stderr, "\x1b[90mINFO: putImageToClipboard(%d) took %.2fms\x1b[0m\n", res, (t2 - t1) * 1000);
+    }
   }
 
   UnloadImage(img);
