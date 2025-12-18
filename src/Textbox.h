@@ -1,5 +1,6 @@
 #pragma once
 #include <raylib.h>
+#include <stdbool.h>
 
 #include "Drawable.h"
 
@@ -25,14 +26,11 @@ typedef struct Textbox {
   Color textColor;
 
   // must be >= 1
-  // default value: 2
-  int fontSize;
-  // default value: GetFont(1)
-  Font font;
-  // default value: true
-  bool showCursor;
-  // default value: false
-  bool thickCursor;
+  int fontSize;     // default value: 2
+  Font font;        // default value: GetFont(1)
+  bool showCursor;  // default value: true
+  bool thickCursor; // default value: false
+  bool hasJustBeenPasted;
 } Textbox;
 
 bool IsKeyTyped(int key);
@@ -51,3 +49,4 @@ void Textbox$Delete(Textbox* textbox);
 void Textbox$Move(Textbox* textbox, Vector2 delta);
 void Textbox$SetColor(Textbox* textbox, Color color);
 Drawable Textbox$New();
+Drawable Textbox$NewFromClipboard();

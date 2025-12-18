@@ -194,6 +194,8 @@ bool Canvas$copy(Canvas* c, char* name) {
 }
 
 void Canvas$addDrawable(Canvas* c, Drawable d) {
+  if (d.self == NULL) return;
+
   c->isUnmodified = false;
   sb_push(c->drawables, d);
   Canvas$updateDrawable(c);

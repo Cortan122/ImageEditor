@@ -5,6 +5,7 @@
 #include <raymath.h>
 #include <string.h>
 
+#include "Drawable.h"
 #include "config.h"
 #include "resource_loader.h"
 #include "stretchy_buffer.h"
@@ -167,7 +168,7 @@ bool Textbox$Update(Textbox* textbox) {
   if (IsKeyTyped(KEY_BACKSPACE)) Textbox$backspace(textbox, true, isctrl);
   if (IsKeyTyped(KEY_DELETE)) Textbox$backspace(textbox, false, isctrl);
 
-  if (IsKeyTyped(KEY_V) && isctrl) {
+  if (IsKeyTyped(KEY_V) && isctrl && !textbox->hasJustBeenPasted) {
     const char* str = GetClipboardText();
     // todo: handle \n and \r
     if (str != NULL) Textbox$addText(textbox, str);
@@ -187,7 +188,7 @@ bool Textbox$Update(Textbox* textbox) {
     return false;
   }
 
-  if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON)) {
+  if (IsMouseButtonDown(MOUSE_RIGHT_BUTTON) || textbox->hasJustBeenPasted) {
     textbox->pos = GetMousePosition();
     textbox->pos.x = roundf(textbox->pos.x);
     textbox->pos.y = roundf(textbox->pos.y);
@@ -196,6 +197,7 @@ bool Textbox$Update(Textbox* textbox) {
   if (IsKeyPressed(KEY_HOME)) textbox->cursorPos = 0;
   if (IsKeyPressed(KEY_END)) textbox->cursorPos = sb_count(textbox->text) - 1;
 
+  textbox->hasJustBeenPasted = false;
   return true;
 }
 
@@ -222,4 +224,17 @@ Drawable Textbox$New() {
   Textbox* self = calloc(1, sizeof(Textbox));
   Textbox$init(self);
   return DRAWABLE(self, Textbox);
+}
+
+Drawable Textbox$NewFromClipboard() {
+  const char* str = GetClipboardText();
+  if (str != NULL) {
+    Textbox* self = calloc(1, sizeof(Textbox));
+    self->hasJustBeenPasted = true;
+    Textbox$init(self);
+    Textbox$addText(self, str);
+    return DRAWABLE(self, Textbox);
+  } else {
+    return (Drawable){0};
+  }
 }

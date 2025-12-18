@@ -4,7 +4,9 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <stdlib.h>
+#include "Drawable.h"
 #include "Screenshot.h"
+#include "Textbox.h"
 
 Rectangle FloatingImage$getRect(FloatingImage* fi) {
   return (Rectangle){fi->pos.x, fi->pos.y, fi->texture.width * fi->scale, fi->texture.height * fi->scale};
@@ -71,9 +73,13 @@ Drawable FloatingImage$New(char* name) {
 }
 
 Drawable FloatingImage$NewFromClipboard() {
-  FloatingImage* self = calloc(1, sizeof(FloatingImage));
-
   Image img = getImageFromClipboard();
+  if (img.data == NULL) {
+    // the thing that got pasted is not an image, try pasting as text instead
+    return Textbox$NewFromClipboard();
+  }
+
+  FloatingImage* self = calloc(1, sizeof(FloatingImage));
   self->texture = LoadTextureFromImage(img);
   UnloadImage(img);
 
