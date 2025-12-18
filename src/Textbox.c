@@ -10,31 +10,8 @@
 #include "resource_loader.h"
 #include "stretchy_buffer.h"
 
-double keyTypingRom[400];
-const double keyRepeatDelay = .500;
-const double keyRepeatRate = 1. / 31;
-
-// TODO: this has been entirely replaced by IsKeyPressed(x) || IsKeyPressedRepeat(x)
 bool IsKeyTyped(int key) {
-  // IsKeyDown on wsl always returns 1 for some reason
-  // or is it...?
-  // then if IsKeyDown() == 0 we know for sure the key isn't down (?)
-  if (!IsKeyDown(key)) keyTypingRom[key] = 0;
-
-  if (IsKeyPressed(key)) {
-    keyTypingRom[key] = keyRepeatDelay;
-    return true;
-  } else if (IsKeyReleased(key)) {
-    keyTypingRom[key] = 0;
-  } else if (keyTypingRom[key]) {
-    keyTypingRom[key] -= GetFrameTime();
-    if (keyTypingRom[key] <= 0) {
-      keyTypingRom[key] += keyRepeatRate;
-      return true;
-    }
-  }
-
-  return false;
+  return IsKeyPressed(key) || IsKeyPressedRepeat(key);
 }
 
 void Textbox$init(Textbox* textbox) {
