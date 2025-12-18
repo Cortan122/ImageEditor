@@ -331,7 +331,7 @@ void Editor$Update(Editor* ed) {
 
     if (!isctrl && IsKeyPressed(KEY_C) && !ed->canvas.isActive) Editor$setMode(ed, UIMODE_COLOR_PALETTE);
 
-    if (IsKeyPressed(KEY_Q)) {
+    if (IsKeyPressed(KEY_Q) && !ed->canvas.isActive) {
       bool is_some;
       Color pickedColor = Canvas$getColorUnderMouse(&ed->canvas, &is_some);
       if (is_some) {
