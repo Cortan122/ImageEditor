@@ -3,7 +3,6 @@
 #include <math.h>
 #include <raylib.h>
 #include <raymath.h>
-#include <stdio.h>
 #include <string.h>
 
 #include "config.h"
@@ -14,6 +13,7 @@ double keyTypingRom[400];
 const double keyRepeatDelay = .500;
 const double keyRepeatRate = 1. / 31;
 
+// TODO: this has been entirely replaced by IsKeyPressed(x) || IsKeyPressedRepeat(x)
 bool IsKeyTyped(int key) {
   // IsKeyDown on wsl always returns 1 for some reason
   // or is it...?
@@ -176,6 +176,10 @@ bool Textbox$Update(Textbox* textbox) {
   if (isctrl) {
     if (IsKeyTyped(KEY_EQUAL) || IsKeyTyped(KEY_KP_ADD)) textbox->fontSize++;
     if (textbox->fontSize > 1 && (IsKeyTyped(KEY_MINUS) || IsKeyTyped(KEY_KP_SUBTRACT))) textbox->fontSize--;
+
+    if (IsKeyPressed(KEY_ONE)) textbox->font = GetFont(0);
+    if (IsKeyPressed(KEY_TWO)) textbox->font = GetFont(1);
+    if (IsKeyPressed(KEY_THREE)) textbox->font = GetFont(3);
   }
 
   if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
