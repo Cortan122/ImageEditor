@@ -26,6 +26,7 @@ typedef struct Canvas {
   Color color;
   Drawable* drawables;  // pointer type: stretchy buffer
   bool isActive;        // todo: rename
+  bool isUnmodified;
 } Canvas;
 
 void Canvas$recenter(Canvas* c);

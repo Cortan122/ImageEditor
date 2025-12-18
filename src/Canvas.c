@@ -3,6 +3,7 @@
 #include <math.h>
 #include <raylib.h>
 #include <raymath.h>
+#include <stdbool.h>
 
 #include "CropRectangle.h"
 #include "Drawable.h"
@@ -193,6 +194,7 @@ bool Canvas$copy(Canvas* c, char* name) {
 }
 
 void Canvas$addDrawable(Canvas* c, Drawable d) {
+  c->isUnmodified = false;
   sb_push(c->drawables, d);
   Canvas$updateDrawable(c);
   Drawable$SetColor(&sb_last(c->drawables), c->color);
@@ -283,6 +285,7 @@ void Canvas$Draw(Canvas* c) {
 
 bool Canvas$loadImage(Canvas* c, char* file) {
   c->nearestNeighborToggle = SMOOTH_SCALE_BY_DEFAULT;
+  c->isUnmodified = false;
 
   bool res = true;
   if (file) {
@@ -292,6 +295,7 @@ bool Canvas$loadImage(Canvas* c, char* file) {
   } else if (!Screenshot$update(&c->screenshot)) {
     Screenshot$setImage(&c->screenshot, LoadImageResource(nothing_png));
     c->nearestNeighborToggle = false;
+    c->isUnmodified = true;
   }
 
   Canvas$reload(c, false);

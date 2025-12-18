@@ -406,7 +406,12 @@ void Editor$Update(Editor* ed) {
 }
 
 void Editor$Delete(Editor* ed) {
-  Canvas$copy(&ed->canvas, NULL);
+  if (!ed->canvas.isUnmodified) {
+    Canvas$copy(&ed->canvas, NULL);
+  } else {
+    fprintf(stderr, "\x1b[33mINFO: Didn't copy canvas, because it was the unmodified default image\x1b[0m\n");
+  }
+
   Canvas$Delete(&ed->canvas);
   Textbox$Delete(&ed->inputField);
 }
