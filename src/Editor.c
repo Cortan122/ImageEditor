@@ -2,28 +2,35 @@
 
 #include <math.h>
 #include <raylib.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "config.h"
+#include "resource_loader.h"
 
-void drawAlignedText(const char* text, int ypos, int fontsize, int alignment, Color c) {
-  if (text == NULL) return;
+int drawAlignedText(const char* text, int ypos, int fontsize, int alignment, Color c) {
+  if (text == NULL) return 0;
 
   SetTextLineSpacing(0);
   int measure = MeasureText(text, fontsize);
   int xpos = 0;
+  int res = 0;
   if (alignment == 0) {
     xpos = GetScreenWidth() / 2 - measure / 2;
+    res = xpos + measure;
   } else if (alignment < 0) {
     xpos = GetScreenWidth() - measure + alignment;
+    res = alignment - measure;
   } else if (alignment > 0) {
     xpos = alignment;
+    res = xpos + measure;
   }
 
   if (ypos < 0) ypos = GetScreenHeight() + ypos - fontsize + 2;
 
   DrawTextEx(GetFontDefault(), text, (Vector2){xpos, ypos}, fontsize, fontsize / 10, c);
+  return res;
 }
 
 typedef struct ColorBlob {
@@ -222,25 +229,48 @@ void Editor$drawColorPicker(Editor* ed) {
   DrawText(hexcode, 20, 1, 20, DARKGRAY);
 }
 
+void Editor$loadIcons(Editor* ed) {
+  if (ed->icons[0].id != 0) return;
+  ed->icons[0] = LoadTextureFromImage(LoadImageResource(icon_pen_png));
+  ed->icons[1] = LoadTextureFromImage(LoadImageResource(icon_pencil_png));
+}
+
 void Editor$drawUIBars(Editor* ed) {
+  // Top Bar:
   if (ENABLE_FPS_COUNTER) {
     DrawText(TextFormat("%2i FPS", GetFPS()), 3, 1, 20, DARKGRAY);
   } else {
     Editor$drawColorPicker(ed);
   }
 
-  drawAlignedText("color:   ", 1, 20, -3, DARKGRAY);
-  Rectangle colorRect = {GetScreenWidth() - 18, 2, 16, 16};
+  int width = GetScreenWidth();
+  int height = GetScreenHeight();
+
+  int colorTextPos = drawAlignedText("color:   ", 1, 20, -3, DARKGRAY);
+  Rectangle colorRect = {width - 18, 2, 16, 16};
   DrawTexture(ed->canvas.transparencyTexture, colorRect.x, colorRect.y, DARKGRAY);
   DrawRectangleRec(colorRect, ed->canvas.color);
+  ed->clickableRects[ZONE_COLOR_RECT] = colorRect;
 
-  const char* sizeIndicator =
-      TextFormat("%dx%d %.0f%%", ed->canvas.texture.width, ed->canvas.texture.height, ed->canvas.scale * 100);
+  int middleTextPos = drawAlignedText(TextFormat("%dx%d", width, height), 1, 20, 0, DARKGRAY);
+
+  if (middleTextPos - colorTextPos < width - 100) {
+    const int marginRight = 10;
+    Rectangle iconRect = {width + colorTextPos - marginRight - 18, 2, 16, 16};
+    DrawRectangleRec(iconRect, LIGHTGRAY);
+    DrawRectangleLinesEx(iconRect, 1, GRAY);
+    DrawTexture(ed->icons[ed->canvas.lineMode], iconRect.x, iconRect.y, WHITE);
+    drawAlignedText("lines: ", 1, 20, colorTextPos - 18 - marginRight, DARKGRAY);
+
+    ed->clickableRects[ZONE_LINE_MODE] = iconRect;
+  } else {
+    ed->clickableRects[ZONE_LINE_MODE] = (Rectangle){0};
+  }
+
+  // Bottom Bar:
+  const char* sizeIndicator = TextFormat("%dx%d %.0f%%", ed->canvas.texture.width, ed->canvas.texture.height, ed->canvas.scale * 100);
   drawAlignedText(sizeIndicator, -1, 20, -3, DARKGRAY);
-
   drawAlignedText(ed->filename ? GetFileName(ed->filename) : "No open file", -1, 20, 3, DARKGRAY);
-
-  drawAlignedText(TextFormat("%dx%d", GetScreenWidth(), GetScreenHeight()), 1, 20, 0, DARKGRAY);
 
   if (ed->canvas.isActive) {
     drawAlignedText(sb_last(ed->canvas.drawables).name, -1, 20, 0, DARKGRAY);
@@ -250,6 +280,8 @@ void Editor$drawUIBars(Editor* ed) {
 }
 
 void Editor$Draw(Editor* ed) {
+  Editor$loadIcons(ed);
+
   ClearBackground(RAYWHITE);
   if (ed->mode == UIMODE_NORMAL) {
     Canvas$Draw(&ed->canvas);
@@ -322,11 +354,26 @@ void Editor$Update(Editor* ed) {
   }
 
   if (ed->mode == UIMODE_NORMAL) {
-    Rectangle colorRect = {GetScreenWidth() - 18, 2, 16, 16};
-    if (CheckCollisionPointRec(GetMousePosition(), colorRect)) {
-      ed->clickableCursor = true;
-      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) Editor$setMode(ed, UIMODE_COLOR_PALETTE);
+    ClickableZoneName clickedZone = ZONE_NONE;
+    for (size_t i = 0; i < array_length(ed->clickableRects); i++) {
+      Rectangle rect = ed->clickableRects[i];
+      if (CheckCollisionPointRec(GetMousePosition(), rect)) {
+        ed->clickableCursor = true;
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) clickedZone = i;
+      }
+    }
+
+    switch (clickedZone) {
+      case ZONE_COLOR_RECT:
+        Editor$setMode(ed, UIMODE_COLOR_PALETTE);
+        break;
+      case ZONE_LINE_MODE:
+        ed->canvas.lineMode = (ed->canvas.lineMode+1) % 2;
+        break;
+      case ZONE_MAX:
+      case ZONE_NONE:
+        break;
     }
 
     if (!isctrl && IsKeyPressed(KEY_C) && !ed->canvas.isActive) Editor$setMode(ed, UIMODE_COLOR_PALETTE);
@@ -341,7 +388,7 @@ void Editor$Update(Editor* ed) {
       }
     }
 
-    if (ed->mode == UIMODE_NORMAL) Canvas$Update(&ed->canvas);
+    if (ed->mode == UIMODE_NORMAL && clickedZone == ZONE_NONE) Canvas$Update(&ed->canvas);
   } else if (ed->mode == UIMODE_COLOR_PALETTE) {
     if (IsWindowResized()) layoutColorBlobs(colorRom);
 
@@ -414,4 +461,8 @@ void Editor$Delete(Editor* ed) {
 
   Canvas$Delete(&ed->canvas);
   Textbox$Delete(&ed->inputField);
+
+  for (size_t i = 0; i < array_length(ed->icons); i++) {
+    UnloadTexture(ed->icons[i]);
+  }
 }

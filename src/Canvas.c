@@ -229,7 +229,7 @@ void Canvas$Update(Canvas* c) {
     Canvas$updateDrawable(c);
   }
   if (!c->isActive) {
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) Canvas$addDrawable(c, DrawableLine$New());
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) Canvas$addDrawable(c, DrawableLine$New(c->lineMode));
     if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) Canvas$addDrawable(c, Textbox$New());
     if (IsKeyTyped(KEY_X)) Canvas$addDrawable(c, CropRectangle$New(c));
     if (IsKeyTyped(KEY_B)) Canvas$addDrawable(c, CropRectangle$New(NULL));

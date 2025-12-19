@@ -58,3 +58,8 @@ You can change some values in `config.h` and then recompile the program.
 ## Bugs
 
 - [x] When cropping an image open as a file, the program segfaults
+
+## Acknowledgements
+
+- Some icons are taken from [aha-soft.com](https://www.small-icons.com/packs/16x16-free-application-icons.htm), licensed under CC SA 3.0
+- The font used for added text is stolen from Minecraft

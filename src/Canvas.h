@@ -2,6 +2,7 @@
 #include <raylib.h>
 
 #include "Drawable.h"
+#include "DrawableLine.h"
 #include "Screenshot.h"
 #include "stretchy_buffer.h"
 
@@ -23,6 +24,7 @@ typedef struct Canvas {
   Vector2 marginTopLeft;
   Vector2 marginBottomRight;
 
+  LineRenderingMode lineMode;
   Color color;
   Drawable* drawables;  // pointer type: stretchy buffer
   bool isActive;        // todo: rename

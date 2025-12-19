@@ -47,6 +47,7 @@ Vector2 Vector2Normal(Vector2 a, Vector2 b) {
 
 Vector2* trigonizeLine(Vector2* line, int len, float thickness) {
   Vector2* res = calloc(len * 2, sizeof(Vector2));
+  if (len < 2) return res;
 
   for (int i = 0; i < len; i++) {
     Vector2 miter;
@@ -71,10 +72,7 @@ Vector2* trigonizeLine(Vector2* line, int len, float thickness) {
   return res;
 }
 
-Vector2* DrawableLine$getTriangleStrip(DrawableLine* dl) {
-  if (dl->triangleStrip) return dl->triangleStrip;
-  DrawableLine$_init(dl);
-
+void DrawableLine$_renderBezier(DrawableLine* dl) {
   BezierPath bez = FitCurve((Vector2d*)dl->line, sb_count(dl->line), dl->error);
   Vector2* bezline = calloc(dl->subdivisions * sb_count(bez), sizeof(Vector2));
   int bezi = 0;
@@ -91,6 +89,21 @@ Vector2* DrawableLine$getTriangleStrip(DrawableLine* dl) {
   dl->triangleStrip = trigonizeLine(bezline, bezi, dl->thickness);
   dl->triangleStripLength = bezi * 2;
   free(bezline);
+}
+
+Vector2* DrawableLine$getTriangleStrip(DrawableLine* dl) {
+  if (dl->triangleStrip) return dl->triangleStrip;
+  DrawableLine$_init(dl);
+
+  switch (dl->mode) {
+    case LRM_BEZIER:
+      DrawableLine$_renderBezier(dl);
+      break;
+    case LRM_STRAIGHT:
+      dl->triangleStrip = trigonizeLine(dl->line, sb_count(dl->line), dl->thickness);
+      dl->triangleStripLength = sb_count(dl->line) * 2;
+      break;
+  }
 
   return dl->triangleStrip;
 }
@@ -162,6 +175,8 @@ void DrawableLine$SetColor(DrawableLine* dl, Color color) {
   dl->color = color;
 }
 
-Drawable DrawableLine$New() {
-  return DRAWABLE(calloc(1, sizeof(DrawableLine)), DrawableLine);
+Drawable DrawableLine$New(LineRenderingMode mode) {
+  DrawableLine* res = calloc(1, sizeof(DrawableLine));
+  res->mode = mode;
+  return DRAWABLE(res, DrawableLine);
 }

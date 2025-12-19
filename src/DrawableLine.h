@@ -3,6 +3,11 @@
 
 #include "Drawable.h"
 
+typedef enum LineRenderingMode {
+  LRM_BEZIER = 0,
+  LRM_STRAIGHT,
+} LineRenderingMode;
+
 typedef struct DrawableLine {
   // pointer type: stretchy buffer, NULL if empty
   Vector2* line;
@@ -11,17 +16,12 @@ typedef struct DrawableLine {
   Vector2* triangleStrip;
   int triangleStripLength;
 
-  // default value: 10
-  float error;
-  // default value: 2
-  float thickness;
+  float error;      // default value: 10
+  float thickness;  // default value: 2
+  int subdivisions; // default value: 30     (must be >= 2)
+  Color color;      // default value: RED
 
-  // must be >= 2
-  // default value: 30
-  int subdivisions;
-
-  // default value: RED
-  Color color;
+  LineRenderingMode mode;
 } DrawableLine;
 
 void DrawableLine$_init(DrawableLine* dl);
@@ -34,4 +34,4 @@ bool DrawableLine$Update(DrawableLine* dl);
 bool DrawableLine$setOptions(DrawableLine* dl, float error, float thickness, int subdivisions, Color color);
 void DrawableLine$Move(DrawableLine* dl, Vector2 delta);
 void DrawableLine$SetColor(DrawableLine* dl, Color color);
-Drawable DrawableLine$New();
+Drawable DrawableLine$New(LineRenderingMode mode);
