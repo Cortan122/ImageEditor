@@ -32,6 +32,7 @@ void DrawableLine$drawDebug(DrawableLine* dl);
 void DrawableLine$Draw(DrawableLine* dl);
 bool DrawableLine$Update(DrawableLine* dl);
 bool DrawableLine$setOptions(DrawableLine* dl, float error, float thickness, int subdivisions, Color color);
+void DrawableLine$setMode(DrawableLine* dl, LineRenderingMode mode);
 void DrawableLine$Move(DrawableLine* dl, Vector2 delta);
 void DrawableLine$SetColor(DrawableLine* dl, Color color);
 Drawable DrawableLine$New(LineRenderingMode mode);

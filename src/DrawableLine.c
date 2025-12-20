@@ -154,6 +154,15 @@ bool DrawableLine$setOptions(DrawableLine* dl, float error, float thickness, int
   return res;
 }
 
+void DrawableLine$setMode(DrawableLine* dl, LineRenderingMode mode) {
+  DrawableLine$_init(dl);
+
+  if (dl->mode != mode) {
+    dl->mode = mode;
+    nfree(dl->triangleStrip);
+  }
+}
+
 void DrawableLine$Move(DrawableLine* dl, Vector2 delta) {
   DrawableLine$_init(dl);
   for (int i = 0; i < sb_count(dl->line); i++) {

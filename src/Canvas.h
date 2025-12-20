@@ -50,3 +50,4 @@ void Canvas$SetColor(Canvas* c, Color color);
 
 Vector2 Canvas$getMousePosition(Canvas* c);
 Color Canvas$getColorUnderMouse(Canvas* c, bool* is_some);
+void Canvas$changeLineMode(Canvas* c, bool retroactive);

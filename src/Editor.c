@@ -369,7 +369,7 @@ void Editor$Update(Editor* ed) {
         Editor$setMode(ed, UIMODE_COLOR_PALETTE);
         break;
       case ZONE_LINE_MODE:
-        ed->canvas.lineMode = (ed->canvas.lineMode+1) % 2;
+        Canvas$changeLineMode(&ed->canvas, isshift);
         break;
       case ZONE_MAX:
       case ZONE_NONE:

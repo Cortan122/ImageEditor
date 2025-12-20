@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "CropRectangle.h"
 #include "Drawable.h"
@@ -182,6 +183,17 @@ void Canvas$keyboardShortcuts(Canvas* c) {
   c->pos.x += -delta.x * movementSpeed;
   c->pos.y += -delta.y * movementSpeed;
   if (delta.x || delta.y) Canvas$recenter(c);
+}
+
+void Canvas$changeLineMode(Canvas* c, bool retroactive) {
+  c->lineMode = (c->lineMode + 1) % 2;
+  if (retroactive) {
+    for (int i = 0; i < sb_count(c->drawables); i++) {
+      if (strcmp(c->drawables[i].name, "DrawableLine") == 0) {
+        DrawableLine$setMode(c->drawables[i].self, c->lineMode);
+      }
+    }
+  }
 }
 
 bool Canvas$copy(Canvas* c, char* name) {
