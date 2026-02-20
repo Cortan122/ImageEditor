@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
   SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_RESIZABLE);
   InitWindow(screenWidth, screenHeight, WINDOW_TITLE);
   SetWindowMinSize(MINSIZE_WIDTH, MINSIZE_HEIGHT);
-  SetTargetFPS(60);
+  SetTargetFPS(TARGET_FPS);
   SetExitKey(0);
   EnableEventWaiting();  // now the fps counter is scuffed
 
