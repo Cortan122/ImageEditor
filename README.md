@@ -43,9 +43,11 @@ $ ./main
 This makes the debug version. If you want to install it on your system, you can use:
 
 ```console
-$ sudo make install
+$ make install
 $ raylid
 ```
+
+NOTE: run `make install` without `sudo`. It will invoke `sudo` for you!
 
 ## Keybinds
 

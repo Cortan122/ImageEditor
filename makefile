@@ -54,7 +54,7 @@ debug: $(EXECUTABLE)
 	ln -sf $(EXECUTABLE) $(EXECUTABLE_SYMLINK)
 
 install: $(EXECUTABLE)
-	install -D $(EXECUTABLE) /usr/local/bin/raylid
+	sudo install -D $(EXECUTABLE) /usr/local/bin/raylid
 
 run: debug
 	./$(EXENAME)
