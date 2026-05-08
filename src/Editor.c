@@ -147,6 +147,15 @@ void drawFramedTextbox(Textbox* textbox) {
   EndScissorMode();
 }
 
+void Editor$setFilename(Editor* ed, const char* filename) {
+  free(ed->filename);
+  if (filename == NULL) {
+    ed->filename = NULL;
+  } else {
+    ed->filename = strdup(filename);
+  }
+}
+
 void Editor$setMode(Editor* ed, UiMode mode) {
   if (ed->mode == mode) return;
   ed->mode = mode;
@@ -194,14 +203,14 @@ void Editor$toggleUi(Editor* ed) {
   Canvas$reload(&ed->canvas, false);
 }
 
-bool Editor$open(Editor* ed, char* filename) {
+bool Editor$open(Editor* ed, const char* filename) {
   if (ed->canvas.marginTopLeft.y == 0 && !ed->isUiHidden) {
     ed->isUiHidden = !ed->isUiHidden;
     Editor$toggleUi(ed);
   }
 
   bool res = Canvas$loadImage(&ed->canvas, filename);
-  if (res) ed->filename = filename;
+  if (res) Editor$setFilename(ed, filename);
   return res;
 }
 
@@ -425,7 +434,7 @@ void Editor$Update(Editor* ed) {
       if (ed->mode == UIMODE_SAVE_AS) res = Canvas$copy(&ed->canvas, ed->inputField.text);
 
       if (res) {
-        ed->filename = ed->inputField.text;
+        Editor$setFilename(ed, ed->inputField.text);
         Editor$setMode(ed, UIMODE_NORMAL);
       } else {
         ed->ioError = true;
@@ -453,6 +462,8 @@ void Editor$Update(Editor* ed) {
 }
 
 void Editor$Delete(Editor* ed) {
+  free(ed->filename);
+
   if (!ed->canvas.isUnmodified) {
     Canvas$copy(&ed->canvas, NULL);
   } else {

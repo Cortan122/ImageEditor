@@ -196,7 +196,7 @@ void Canvas$changeLineMode(Canvas* c, bool retroactive) {
   }
 }
 
-bool Canvas$copy(Canvas* c, char* name) {
+bool Canvas$copy(Canvas* c, const char* name) {
   Screenshot$begin(&c->screenshot);
   DrawTexture(c->texture, 0, 0, WHITE);
   for (int i = 0; i < sb_count(c->drawables); i++) {
@@ -297,7 +297,7 @@ void Canvas$Draw(Canvas* c) {
   EndScissorMode();
 }
 
-bool Canvas$loadImage(Canvas* c, char* file) {
+bool Canvas$loadImage(Canvas* c, const char* file) {
   c->nearestNeighborToggle = SMOOTH_SCALE_BY_DEFAULT;
   c->isUnmodified = false;
 

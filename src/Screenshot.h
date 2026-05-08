@@ -17,5 +17,5 @@ void waitEvents();
 bool Screenshot$setImage(Screenshot* cm, Image img);
 bool Screenshot$update(Screenshot* cm);
 void Screenshot$begin(Screenshot* cm);
-bool Screenshot$end(Screenshot* cm, char* name);
+bool Screenshot$end(Screenshot* cm, const char* name);
 void Screenshot$Delete(Screenshot* cm);

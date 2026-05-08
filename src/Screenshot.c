@@ -352,7 +352,7 @@ void Screenshot$begin(Screenshot* cm) {
   BeginTextureMode(cm->renderTexture);
 }
 
-bool Screenshot$end(Screenshot* cm, char* name) {
+bool Screenshot$end(Screenshot* cm, const char* name) {
   EndTextureMode();
   if (useAntialiasedFramebuffer) {
     blitAntialiasedFramebuffer(cm->width, cm->height, cm->renderTexture.id, cm->renderTexture.depth.id);

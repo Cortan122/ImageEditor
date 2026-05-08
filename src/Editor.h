@@ -41,7 +41,7 @@ typedef struct Editor {
 
 void Editor$setMode(Editor* ed, UiMode mode);
 void Editor$toggleUi(Editor* ed);
-bool Editor$open(Editor* ed, char* filename);
+bool Editor$open(Editor* ed, const char* filename);
 void Editor$drawColorPicker(Editor* ed);
 void Editor$drawUIBars(Editor* ed);
 void Editor$Draw(Editor* ed);

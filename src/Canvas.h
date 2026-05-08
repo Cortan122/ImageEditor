@@ -40,12 +40,12 @@ void Canvas$zoom(Canvas* c, int delta);
 void Canvas$updateDrawable(Canvas* c);
 void Canvas$takeScreenshot(Canvas* c);
 void Canvas$keyboardShortcuts(Canvas* c);
-bool Canvas$copy(Canvas* c, char* name);
+bool Canvas$copy(Canvas* c, const char* name);
 void Canvas$addDrawable(Canvas* c, Drawable d);
 void Canvas$Update(Canvas* c);
 void Canvas$Draw(Canvas* c);
 void Canvas$Delete(Canvas* c);
-bool Canvas$loadImage(Canvas* c, char* file);
+bool Canvas$loadImage(Canvas* c, const char* file);
 void Canvas$SetColor(Canvas* c, Color color);
 
 Vector2 Canvas$getMousePosition(Canvas* c);
