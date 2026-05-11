@@ -1,7 +1,9 @@
 #include "Editor.h"
 
+#include <assert.h>
 #include <math.h>
 #include <raylib.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
@@ -244,6 +246,36 @@ void Editor$loadIcons(Editor* ed) {
   ed->icons[1] = LoadTextureFromImage(LoadImageResource(icon_pencil_png));
 }
 
+bool Editor$canFitUIBarRect(Editor* ed, const char* string, ClickableZoneName zone, int* cursor, int max) {
+  const int internalSpacing = 10;
+  const int fontSize = 20;
+  const int rectSize = 16;
+  const int rectMargin = 2;
+  const int rectSizeOuter = rectSize + rectMargin;
+
+  int width = GetScreenWidth();
+  int measure = MeasureText(string, fontSize);
+
+  // Note: cursor here is a negative number, the number of pixels on the right edge
+  //       both numbers in the if() are negative
+  int nextCursorValue = *cursor - measure - rectSizeOuter;
+  if (nextCursorValue - internalSpacing < max) {
+    ed->clickableRects[zone] = (Rectangle){0};
+    return false;
+  }
+
+  Rectangle rect = {width + *cursor - rectSizeOuter, rectMargin, rectSize, rectSize};
+  DrawRectangleRec(rect, LIGHTGRAY);
+  DrawRectangleLinesEx(rect, 1, GRAY);
+
+  int actualCursorValue = drawAlignedText(string, 1, fontSize, *cursor - rectSizeOuter, DARKGRAY);
+  assert(actualCursorValue == nextCursorValue);
+
+  ed->clickableRects[zone] = rect;
+  *cursor = actualCursorValue - internalSpacing;
+  return true;
+}
+
 void Editor$drawUIBars(Editor* ed) {
   // Top Bar:
   if (ENABLE_FPS_COUNTER) {
@@ -254,26 +286,18 @@ void Editor$drawUIBars(Editor* ed) {
 
   int width = GetScreenWidth();
   int height = GetScreenHeight();
-
-  int colorTextPos = drawAlignedText("color:   ", 1, 20, -3, DARKGRAY);
-  Rectangle colorRect = {width - 18, 2, 16, 16};
-  DrawTexture(ed->canvas.transparencyTexture, colorRect.x, colorRect.y, DARKGRAY);
-  DrawRectangleRec(colorRect, ed->canvas.color);
-  ed->clickableRects[ZONE_COLOR_RECT] = colorRect;
-
   int middleTextPos = drawAlignedText(TextFormat("%dx%d", width, height), 1, 20, 0, DARKGRAY);
 
-  if (middleTextPos - colorTextPos < width - 100) {
-    const int marginRight = 10;
-    Rectangle iconRect = {width + colorTextPos - marginRight - 18, 2, 16, 16};
-    DrawRectangleRec(iconRect, LIGHTGRAY);
-    DrawRectangleLinesEx(iconRect, 1, GRAY);
-    DrawTexture(ed->icons[ed->canvas.lineMode], iconRect.x, iconRect.y, WHITE);
-    drawAlignedText("lines: ", 1, 20, colorTextPos - 18 - marginRight, DARKGRAY);
-
-    ed->clickableRects[ZONE_LINE_MODE] = iconRect;
-  } else {
-    ed->clickableRects[ZONE_LINE_MODE] = (Rectangle){0};
+  int cursor = -3;
+  int cursorMax = middleTextPos - width;
+  if (Editor$canFitUIBarRect(ed, "color: ", ZONE_COLOR_RECT, &cursor, cursorMax)) {
+    Rectangle rect = ed->clickableRects[ZONE_COLOR_RECT];
+    DrawTexture(ed->canvas.transparencyTexture, rect.x, rect.y, DARKGRAY);
+    DrawRectangleRec(rect, ed->canvas.color);
+  }
+  if (Editor$canFitUIBarRect(ed, "lines: ", ZONE_LINE_MODE, &cursor, cursorMax)) {
+    Rectangle rect = ed->clickableRects[ZONE_LINE_MODE];
+    DrawTexture(ed->icons[ed->canvas.lineMode], rect.x, rect.y, WHITE);
   }
 
   // Bottom Bar:
