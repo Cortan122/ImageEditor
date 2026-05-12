@@ -186,7 +186,7 @@ void Canvas$keyboardShortcuts(Canvas* c) {
 }
 
 void Canvas$changeLineMode(Canvas* c, bool retroactive) {
-  c->lineMode = (c->lineMode + 1) % 2;
+  c->lineMode = (c->lineMode + 1) % LRM_NUM_MODES;
   if (retroactive) {
     for (int i = 0; i < sb_count(c->drawables); i++) {
       if (strcmp(c->drawables[i].name, "DrawableLine") == 0) {

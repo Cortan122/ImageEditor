@@ -99,9 +99,12 @@ Vector2* DrawableLine$getTriangleStrip(DrawableLine* dl) {
     case LRM_BEZIER:
       DrawableLine$_renderBezier(dl);
       break;
-    case LRM_STRAIGHT:
+    case LRM_DIRECT:
       dl->triangleStrip = trigonizeLine(dl->line, sb_count(dl->line), dl->thickness);
       dl->triangleStripLength = sb_count(dl->line) * 2;
+      break;
+
+    case LRM_NUM_MODES:
       break;
   }
 
