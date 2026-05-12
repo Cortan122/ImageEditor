@@ -17,6 +17,7 @@ typedef enum UiMode {
 typedef enum ClickableZoneName {
   ZONE_COLOR_RECT = 0,
   ZONE_LINE_MODE,
+  ZONE_FILENAME,
 
   ZONE_MAX,
   ZONE_NONE = -1,

@@ -303,7 +303,10 @@ void Editor$drawUIBars(Editor* ed) {
   // Bottom Bar:
   const char* sizeIndicator = TextFormat("%dx%d %.0f%%", ed->canvas.texture.width, ed->canvas.texture.height, ed->canvas.scale * 100);
   drawAlignedText(sizeIndicator, -1, 20, -3, DARKGRAY);
-  drawAlignedText(ed->filename ? GetFileName(ed->filename) : "No open file", -1, 20, 3, DARKGRAY);
+
+  const char* filenameIndicator = ed->filename ? GetFileName(ed->filename) : "No open file";
+  int measure = drawAlignedText(filenameIndicator, -1, 20, 3, DARKGRAY);
+  ed->clickableRects[ZONE_FILENAME] = (Rectangle){1, height - 20, measure, 20};
 
   if (ed->canvas.isActive) {
     drawAlignedText(sb_last(ed->canvas.drawables).name, -1, 20, 0, DARKGRAY);
@@ -403,6 +406,9 @@ void Editor$Update(Editor* ed) {
         break;
       case ZONE_LINE_MODE:
         Canvas$changeLineMode(&ed->canvas, isshift);
+        break;
+      case ZONE_FILENAME:
+        Editor$setMode(ed, UIMODE_SAVE_AS);
         break;
       case ZONE_MAX:
       case ZONE_NONE:
