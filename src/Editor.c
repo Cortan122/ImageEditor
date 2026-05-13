@@ -242,8 +242,11 @@ void Editor$drawColorPicker(Editor* ed) {
 
 void Editor$loadIcons(Editor* ed) {
   if (ed->icons[0].id != 0) return;
-  ed->icons[0] = LoadTextureFromImage(LoadImageResource(icon_pen_png));
-  ed->icons[1] = LoadTextureFromImage(LoadImageResource(icon_pencil_png));
+  ed->icons[LRM_BEZIER] = LoadTextureFromImage(LoadImageResource(icon_pen_png));
+  ed->icons[LRM_DIRECT] = LoadTextureFromImage(LoadImageResource(icon_pencil_png));
+  ed->icons[LRM_STRAIGHT] = LoadTextureFromImage(LoadImageResource(icon_tag_png));
+
+  static_assert(NUM_ICONS == 3, "Load more icons");
 }
 
 bool Editor$canFitUIBarRect(Editor* ed, const char* string, ClickableZoneName zone, int* cursor, int max) {

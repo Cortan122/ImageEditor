@@ -1,11 +1,13 @@
 #include "DrawableLine.h"
 
+#include <math.h>
 #include <raylib.h>
 #include <raymath.h>
 #include <string.h>
 
 #include "BezierCurve.h"
 #include "config.h"
+#include "stretchy_buffer.h"
 
 #define nfree(x) \
   do {           \
@@ -91,6 +93,64 @@ void DrawableLine$_renderBezier(DrawableLine* dl) {
   free(bezline);
 }
 
+static const int numSections = 16;
+static const int minSectionSize = 10;
+
+static int getSectionIndex(Vector2 start, Vector2 end) {
+  Vector2 delta = Vector2Subtract(end, start);
+  double atan = atan2(delta.y, delta.x) + M_PI;
+  int section = round(atan / (M_PI*2) * numSections);
+  return section;
+}
+
+static Vector2 sectionToVector(int section) {
+  double angle = section * (2*M_PI) / numSections;
+  Vector2 res = {cos(angle), sin(angle)};
+  return res;
+}
+
+static Vector2 normalizedEndpoint(Vector2 start, Vector2 end) {
+  int section = getSectionIndex(start, end);
+  Vector2 dir = sectionToVector(section);
+  Vector2 delta = Vector2Subtract(end, start);
+  Vector2 normalizedDelta = Vector2Scale(dir, Vector2DotProduct(dir, delta));
+  return Vector2Add(normalizedDelta, start);
+}
+
+void DrawableLine$_renderStraight(DrawableLine* dl) {
+  if (sb_count(dl->line) < 2) return;
+
+  Vector2* array = NULL;
+  Vector2 start = dl->line[0];
+  Vector2 end = dl->line[sb_count(dl->line)-1];
+  sb_push(array, start);
+
+  int sectionStart = 0;
+  int section = getSectionIndex(start, dl->line[1]);
+  for (int i = 1; i < sb_count(dl->line); i++) {
+    Vector2 point = dl->line[i];
+    int newSection = getSectionIndex(start, point);
+    int sectionSize = i - sectionStart;
+
+    if (section != newSection && sectionSize > minSectionSize) {
+      Vector2 endpoint = normalizedEndpoint(start, dl->line[i-1]);
+      sb_push(array, endpoint);
+
+      sectionStart = i;
+      start = endpoint;
+      if (i != sb_count(dl->line)-1) {
+        section = getSectionIndex(start, dl->line[i]);
+      }
+    }
+  }
+
+  sb_push(array, normalizedEndpoint(start, end));
+
+  dl->triangleStrip = trigonizeLine(array, sb_count(array), dl->thickness);
+  dl->triangleStripLength = sb_count(array) * 2;
+  sb_free(array);
+}
+
 Vector2* DrawableLine$getTriangleStrip(DrawableLine* dl) {
   if (dl->triangleStrip) return dl->triangleStrip;
   DrawableLine$_init(dl);
@@ -102,6 +162,9 @@ Vector2* DrawableLine$getTriangleStrip(DrawableLine* dl) {
     case LRM_DIRECT:
       dl->triangleStrip = trigonizeLine(dl->line, sb_count(dl->line), dl->thickness);
       dl->triangleStripLength = sb_count(dl->line) * 2;
+      break;
+    case LRM_STRAIGHT:
+      DrawableLine$_renderStraight(dl);
       break;
 
     case LRM_NUM_MODES:

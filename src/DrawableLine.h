@@ -5,6 +5,7 @@
 
 typedef enum LineRenderingMode {
   LRM_BEZIER = 0,
+  LRM_STRAIGHT,
   LRM_DIRECT,
 
   LRM_NUM_MODES,

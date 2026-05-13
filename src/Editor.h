@@ -1,4 +1,5 @@
 #pragma once
+#include <assert.h>
 #include <raylib.h>
 
 #include "Canvas.h"
@@ -23,6 +24,8 @@ typedef enum ClickableZoneName {
   ZONE_NONE = -1,
 } ClickableZoneName;
 
+#define NUM_ICONS 3
+static_assert(LRM_NUM_MODES == NUM_ICONS, "Update the number of icons");
 
 typedef struct Editor {
   Canvas canvas;
@@ -37,7 +40,7 @@ typedef struct Editor {
   float colorPickerPopupTimer;
 
   Rectangle clickableRects[ZONE_MAX];
-  Texture icons[2];
+  Texture icons[NUM_ICONS];
 } Editor;
 
 void Editor$setMode(Editor* ed, UiMode mode);
