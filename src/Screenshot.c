@@ -165,17 +165,32 @@ bool deleteTempFile() {
   return true;
 }
 
+uint8_t* x11GetImageFromClipboardSubprocess(int *length) {
+  uint8_t* res = NULL;
+
+  // Note: there is a bug, that when the clipboard is form us, it causes a deadlock.
+  //       Only call this function, if we know the clipboard does not contain text
+  const char* command = "xclip -selection clipboard -t image/png -o > \"$tempfilename\"";
+
+  if (createTempFile()) {
+    if (!system(command)) {
+      res = LoadFileData(tempFileName, length);
+
+    } else {
+      printf("\x1b[33mWARN: Xclip failed to get image, when we assumed the image was there\x1b[0m\n");
+    }
+  }
+  deleteTempFile();
+
+  return res;
+}
+
 Image getImageFromClipboard() {
   Image res = {0};
 
-  // TODO: do the timeout in C. actually don't timeout, do other thing. whatever.
-  // Note: there is a bug when the clipboard is form us. i think the way to solve this
-  // probably we can look at the sourcecode of raylib's GetClipboardImage()
-  const char* command = "timeout 2 xclip -selection clipboard -t image/png -o > \"$tempfilename\"";
-
   const char* session = getenv("XDG_SESSION_TYPE");
   if (strcmp(session, "wayland") == 0) {
-    command = "wl-paste -t image/png > \"$tempfilename\"";
+    const char* command = "wl-paste -t image/png > \"$tempfilename\"";
 
     if (createTempFile()) {
       if (!system(command)) {

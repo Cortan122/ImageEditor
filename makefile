@@ -8,7 +8,7 @@ CPPFLAGS=-Iexternal/ -I$(BUILD_DIR)/
 EXENAME=main
 
 ifneq "$(OS)" "Windows_NT"
-	LDLIBS += -lX11
+	LDLIBS += -lX11 -lXext
 endif
 
 TARGETS=install debug

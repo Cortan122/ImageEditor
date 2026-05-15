@@ -6,6 +6,7 @@
 
 #include "Editor.h"
 #include "config.h"
+#include "x11_platform_code.h"
 
 int main(int argc, char** argv) {
   const char* display = getenv("DISPLAY");
@@ -52,5 +53,8 @@ int main(int argc, char** argv) {
   Editor$Delete(&theEditor);
 
   CloseWindow();
+#ifndef _WIN32
+  x11CleanupState();
+#endif
   return 0;
 }
