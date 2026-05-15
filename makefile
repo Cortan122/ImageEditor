@@ -7,6 +7,10 @@ CFLAGS=-MMD -fdollars-in-identifiers -funsigned-char $(WARNINGS) -Werror=vla
 CPPFLAGS=-Iexternal/ -I$(BUILD_DIR)/
 EXENAME=main
 
+ifneq "$(OS)" "Windows_NT"
+	LDLIBS += -lX11
+endif
+
 TARGETS=install debug
 ifeq "$(MAKECMDGOALS)" "install"
   OBJ_EXT=-O

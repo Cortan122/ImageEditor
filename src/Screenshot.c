@@ -5,6 +5,8 @@
 #include <raylib.h>
 #include <rlgl.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -136,6 +138,7 @@ void waitEvents() {
 
 #else
 #include <unistd.h>
+#include "x11_platform_code.h"
 
 #define PE(x)      \
   if ((x) == -1) { \
@@ -167,19 +170,28 @@ Image getImageFromClipboard() {
 
   // TODO: do the timeout in C. actually don't timeout, do other thing. whatever.
   // Note: there is a bug when the clipboard is form us. i think the way to solve this
+  // probably we can look at the sourcecode of raylib's GetClipboardImage()
   const char* command = "timeout 2 xclip -selection clipboard -t image/png -o > \"$tempfilename\"";
 
   const char* session = getenv("XDG_SESSION_TYPE");
   if (strcmp(session, "wayland") == 0) {
     command = "wl-paste -t image/png > \"$tempfilename\"";
-  }
 
-  if (createTempFile()) {
-    if (!system(command)) {
-      res = LoadImage(tempFileName);
+    if (createTempFile()) {
+      if (!system(command)) {
+        res = LoadImage(tempFileName);
+      }
+    }
+    deleteTempFile();
+  } else {
+    int length = 0;
+    uint8_t* data = x11GetImageFromClipboardNonblocking(&length);
+    if (data) {
+      res = LoadImageFromMemory(".png", data, length);
+      free(data);
     }
   }
-  deleteTempFile();
+
 
   return res;
 }
