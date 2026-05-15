@@ -165,7 +165,10 @@ bool deleteTempFile() {
 Image getImageFromClipboard() {
   Image res = {0};
 
-  const char* command = "xclip -selection clipboard -t image/png -o > \"$tempfilename\"";
+  // TODO: do the timeout in C. actually don't timeout, do other thing. whatever.
+  // Note: there is a bug when the clipboard is form us. i think the way to solve this
+  const char* command = "timeout 2 xclip -selection clipboard -t image/png -o > \"$tempfilename\"";
+
   const char* session = getenv("XDG_SESSION_TYPE");
   if (strcmp(session, "wayland") == 0) {
     command = "wl-paste -t image/png > \"$tempfilename\"";
