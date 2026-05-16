@@ -220,7 +220,6 @@ void drawFontCharToRect(Font font, char codepoint, Rectangle destRec, Color tint
   // Note: based on the source code of DrawTextCodepoint() in rtext.c in raylib
   int index = GetGlyphIndex(font, codepoint);
 
-
   Rectangle srcRec = {
     font.recs[index].x - (float)font.glyphPadding, font.recs[index].y - (float)font.glyphPadding,
     font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding
