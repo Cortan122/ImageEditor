@@ -48,5 +48,6 @@ bool Textbox$Update(Textbox* textbox);
 void Textbox$Delete(Textbox* textbox);
 void Textbox$Move(Textbox* textbox, Vector2 delta);
 void Textbox$SetColor(Textbox* textbox, Color color);
-Drawable Textbox$New();
+void Textbox$setFont(Textbox* textbox, int fontIndex);
+Drawable Textbox$New(int fontIndex);
 Drawable Textbox$NewFromClipboard();

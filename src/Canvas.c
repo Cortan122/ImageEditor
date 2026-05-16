@@ -187,10 +187,25 @@ void Canvas$keyboardShortcuts(Canvas* c) {
 
 void Canvas$changeLineMode(Canvas* c, bool retroactive) {
   c->lineMode = (c->lineMode + 1) % LRM_NUM_MODES;
+
   if (retroactive) {
     for (int i = 0; i < sb_count(c->drawables); i++) {
       if (strcmp(c->drawables[i].name, "DrawableLine") == 0) {
         DrawableLine$setMode(c->drawables[i].self, c->lineMode);
+      }
+    }
+  }
+}
+
+void Canvas$changeTextboxFont(Canvas* c, bool retroactive) {
+  int num_fonts = GetFontCount();
+  c->textboxFontIndex--;
+  if (c->textboxFontIndex < 0) c->textboxFontIndex = num_fonts - 1;
+
+  if (retroactive) {
+    for (int i = 0; i < sb_count(c->drawables); i++) {
+      if (strcmp(c->drawables[i].name, "Textbox") == 0) {
+        Textbox$setFont(c->drawables[i].self, c->textboxFontIndex);
       }
     }
   }
@@ -242,7 +257,7 @@ void Canvas$Update(Canvas* c) {
   }
   if (!c->isActive) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) Canvas$addDrawable(c, DrawableLine$New(c->lineMode));
-    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) Canvas$addDrawable(c, Textbox$New());
+    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) Canvas$addDrawable(c, Textbox$New(c->textboxFontIndex));
     if (IsKeyTyped(KEY_X)) Canvas$addDrawable(c, CropRectangle$New(c));
     if (IsKeyTyped(KEY_B)) Canvas$addDrawable(c, CropRectangle$New(NULL));
 
@@ -300,6 +315,7 @@ void Canvas$Draw(Canvas* c) {
 bool Canvas$loadImage(Canvas* c, const char* file) {
   c->nearestNeighborToggle = SMOOTH_SCALE_BY_DEFAULT;
   c->isUnmodified = false;
+  c->textboxFontIndex = DEFAULT_TEXT_FONT;
 
   bool res = true;
   if (file) {

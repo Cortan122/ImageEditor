@@ -25,6 +25,7 @@ typedef struct Canvas {
   Vector2 marginBottomRight;
 
   LineRenderingMode lineMode;
+  int textboxFontIndex;
   Color color;
   Drawable* drawables;  // pointer type: stretchy buffer
   bool isActive;        // todo: rename
@@ -51,3 +52,4 @@ void Canvas$SetColor(Canvas* c, Color color);
 Vector2 Canvas$getMousePosition(Canvas* c);
 Color Canvas$getColorUnderMouse(Canvas* c, bool* is_some);
 void Canvas$changeLineMode(Canvas* c, bool retroactive);
+void Canvas$changeTextboxFont(Canvas* c, bool retroactive);

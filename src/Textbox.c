@@ -157,7 +157,7 @@ bool Textbox$Update(Textbox* textbox) {
 
     if (IsKeyPressed(KEY_ONE)) textbox->font = GetFont(0);
     if (IsKeyPressed(KEY_TWO)) textbox->font = GetFont(1);
-    if (IsKeyPressed(KEY_THREE)) textbox->font = GetFont(3);
+    if (IsKeyPressed(KEY_THREE)) textbox->font = GetFont(2);
   }
 
   if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -197,9 +197,14 @@ void Textbox$SetColor(Textbox* textbox, Color color) {
   textbox->textColor = color;
 }
 
-Drawable Textbox$New() {
+void Textbox$setFont(Textbox* textbox, int fontIndex) {
+  textbox->font = GetFont(fontIndex);
+}
+
+Drawable Textbox$New(int fontIndex) {
   Textbox* self = calloc(1, sizeof(Textbox));
   Textbox$init(self);
+  Textbox$setFont(self, fontIndex);
   return DRAWABLE(self, Textbox);
 }
 

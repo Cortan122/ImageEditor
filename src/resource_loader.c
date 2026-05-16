@@ -86,6 +86,10 @@ FontDescriptor* GetFonts() {
   return font_rom;
 }
 
+int GetFontCount() {
+  return array_length(font_rom);
+}
+
 Vector2 DrawTextScaled(Font font, const char* text, Vector2 position, float scale, Color tint) {
   Vector2 delta = MeasureTextEx(font, text, font.baseSize * scale, scale);
   DrawTextEx(font, text, position, font.baseSize * scale, scale, tint);

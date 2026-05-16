@@ -216,6 +216,30 @@ bool Editor$open(Editor* ed, const char* filename) {
   return res;
 }
 
+void drawFontCharToRect(Font font, char codepoint, Rectangle destRec, Color tint) {
+  // Note: based on the source code of DrawTextCodepoint() in rtext.c in raylib
+  int index = GetGlyphIndex(font, codepoint);
+
+
+  Rectangle srcRec = {
+    font.recs[index].x - (float)font.glyphPadding, font.recs[index].y - (float)font.glyphPadding,
+    font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding
+  };
+
+  // TODO: use the same logic as Canvas$recenter() to fit one rect into another
+  if (srcRec.width < destRec.width && srcRec.height < destRec.height) {
+    float old_w = destRec.width;
+    destRec.width = srcRec.width;
+    destRec.x += floor((old_w - destRec.width)/2);
+
+    float old_h = destRec.height;
+    destRec.height = srcRec.height;
+    destRec.y += floor((old_h - destRec.height)/2);
+  }
+
+  DrawTexturePro(font.texture, srcRec, destRec, (Vector2){ 0, 0 }, 0.0f, tint);
+}
+
 // Note: the returned pointer has a very short lifetime
 const char* getColorHexcode(Color c) {
   return TextFormat("#%02X%02X%02X", c.r, c.g, c.b);
@@ -301,6 +325,11 @@ void Editor$drawUIBars(Editor* ed) {
   if (Editor$canFitUIBarRect(ed, "lines: ", ZONE_LINE_MODE, &cursor, cursorMax)) {
     Rectangle rect = ed->clickableRects[ZONE_LINE_MODE];
     DrawTexture(ed->icons[ed->canvas.lineMode], rect.x, rect.y, WHITE);
+  }
+  if (Editor$canFitUIBarRect(ed, "font: ", ZONE_TEXT_FONT, &cursor, cursorMax)) {
+    Font font = GetFont(ed->canvas.textboxFontIndex);
+    Rectangle rect = ed->clickableRects[ZONE_TEXT_FONT];
+    drawFontCharToRect(font, 'j', rect, BLACK);
   }
 
   // Bottom Bar:
@@ -409,6 +438,9 @@ void Editor$Update(Editor* ed) {
         break;
       case ZONE_LINE_MODE:
         Canvas$changeLineMode(&ed->canvas, isshift);
+        break;
+      case ZONE_TEXT_FONT:
+         Canvas$changeTextboxFont(&ed->canvas, isshift);
         break;
       case ZONE_FILENAME:
         Editor$setMode(ed, UIMODE_SAVE_AS);

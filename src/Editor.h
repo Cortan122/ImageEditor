@@ -5,8 +5,6 @@
 #include "Canvas.h"
 #include "Textbox.h"
 
-#define array_length(x) (sizeof(x)/sizeof(*x))
-
 typedef enum UiMode {
   UIMODE_NORMAL,
   UIMODE_COLOR_PALETTE,
@@ -18,6 +16,7 @@ typedef enum UiMode {
 typedef enum ClickableZoneName {
   ZONE_COLOR_RECT = 0,
   ZONE_LINE_MODE,
+  ZONE_TEXT_FONT,
   ZONE_FILENAME,
 
   ZONE_MAX,
