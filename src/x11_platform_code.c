@@ -127,7 +127,10 @@ uint8_t* x11GetImageFromClipboardNonblocking(int *length) {
     // Code taken from: https://github.com/raysan5/raylib/blob/master/src/platforms/rcore_desktop_glfw.c
     // REF: https://github.com/ColleagueRiley/Clipboard-Copy-Paste/blob/main/x11.c
 
+    // We need to reset the display server connection, because in cases were we time out, it gets stuck in some broken state.
+    // No, reopening the window does not work. It has to be the whole connection...
     x11CleanupState();
+
     if (dpy == NULL) {
         dpy = XOpenDisplay(NULL);
         if (!dpy) return NULL;
