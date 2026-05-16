@@ -159,16 +159,12 @@ uint8_t* x11GetImageFromClipboardNonblocking(int *length) {
         actualTypeName = XGetAtomName(dpy, actualType);
     }
 
-    printf("\x1b[36mINFO: actualFormat = %d\x1b[0m\n", actualFormat);
-    printf("\x1b[36mINFO: bytesAfter = %ld\x1b[0m\n", bytesAfter);
-    printf("\x1b[36mINFO: nitems = %ld\x1b[0m\n", nitems);
-    printf("\x1b[36mINFO: Atom name '%s'\x1b[0m\n", actualTypeName);
-
     uint8_t *retval = NULL;
     if (strcmp(actualTypeName, "image/png") == 0) {
         if (data == NULL) {
             printf("\x1b[33mWARN: We got a png with no data\x1b[0m\n");
         } else {
+            printf("\x1b[90mINFO: Got direct png of size \x1b[32m%lu\x1b[0m\n", nitems);
             retval = calloc(nitems, 1);
             memcpy(retval, data, nitems);
             *length = nitems;
