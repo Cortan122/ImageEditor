@@ -185,57 +185,36 @@ void Canvas$keyboardShortcuts(Canvas* c) {
   if (delta.x || delta.y) Canvas$recenter(c);
 }
 
+#define RetroactiveUpdate(typename, callback, pram) do { \
+  if (retroactive) { \
+    for (int i = 0; i < sb_count(c->drawables); i++) { \
+      if (strcmp(c->drawables[i].name, (typename)) == 0) { \
+        (callback)(c->drawables[i].self, (pram)); \
+      } \
+    } \
+  } else if (c->isActive) { \
+    int i = sb_count(c->drawables) - 1; \
+    if (strcmp(c->drawables[i].name, (typename)) == 0) { \
+      (callback)(c->drawables[i].self, (pram)); \
+    } \
+  } \
+} while(0)
+
 void Canvas$changeLineMode(Canvas* c, bool retroactive) {
   c->lineMode = (c->lineMode + 1) % LRM_NUM_MODES;
-
-  if (retroactive) {
-    for (int i = 0; i < sb_count(c->drawables); i++) {
-      if (strcmp(c->drawables[i].name, "DrawableLine") == 0) {
-        DrawableLine$setMode(c->drawables[i].self, c->lineMode);
-      }
-    }
-  } else if (c->isActive) {
-    int i = sb_count(c->drawables) - 1;
-    if (strcmp(c->drawables[i].name, "DrawableLine") == 0) {
-      DrawableLine$setMode(c->drawables[i].self, c->lineMode);
-    }
-  }
+  RetroactiveUpdate("DrawableLine", DrawableLine$setMode, c->lineMode);
 }
 
 void Canvas$changeTextboxEffect(Canvas* c, bool retroactive) {
   c->textboxEffect = (c->textboxEffect + 1) % TXT_NUM_EFFECTS;
-
-  if (retroactive) {
-    for (int i = 0; i < sb_count(c->drawables); i++) {
-      if (strcmp(c->drawables[i].name, "Textbox") == 0) {
-        Textbox$setEffect(c->drawables[i].self, c->textboxEffect);
-      }
-    }
-  } else if (c->isActive) {
-    int i = sb_count(c->drawables) - 1;
-    if (strcmp(c->drawables[i].name, "Textbox") == 0) {
-      Textbox$setEffect(c->drawables[i].self, c->textboxEffect);
-    }
-  }
+  RetroactiveUpdate("Textbox", Textbox$setEffect, c->textboxEffect);
 }
 
 void Canvas$changeTextboxFont(Canvas* c, bool retroactive) {
   int num_fonts = GetFontCount();
   c->textboxFontIndex--;
   if (c->textboxFontIndex < 0) c->textboxFontIndex = num_fonts - 1;
-
-  if (retroactive) {
-    for (int i = 0; i < sb_count(c->drawables); i++) {
-      if (strcmp(c->drawables[i].name, "Textbox") == 0) {
-        Textbox$setFont(c->drawables[i].self, c->textboxFontIndex);
-      }
-    }
-  } else if (c->isActive) {
-    int i = sb_count(c->drawables) - 1;
-    if (strcmp(c->drawables[i].name, "Textbox") == 0) {
-      Textbox$setFont(c->drawables[i].self, c->textboxFontIndex);
-    }
-  }
+  RetroactiveUpdate("Textbox", Textbox$setFont, c->textboxFontIndex);
 }
 
 bool Canvas$copy(Canvas* c, const char* name) {
