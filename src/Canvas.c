@@ -194,6 +194,11 @@ void Canvas$changeLineMode(Canvas* c, bool retroactive) {
         DrawableLine$setMode(c->drawables[i].self, c->lineMode);
       }
     }
+  } else if (c->isActive) {
+    int i = sb_count(c->drawables) - 1;
+    if (strcmp(c->drawables[i].name, "DrawableLine") == 0) {
+      DrawableLine$setMode(c->drawables[i].self, c->lineMode);
+    }
   }
 }
 
@@ -205,6 +210,11 @@ void Canvas$changeTextboxEffect(Canvas* c, bool retroactive) {
       if (strcmp(c->drawables[i].name, "Textbox") == 0) {
         Textbox$setEffect(c->drawables[i].self, c->textboxEffect);
       }
+    }
+  } else if (c->isActive) {
+    int i = sb_count(c->drawables) - 1;
+    if (strcmp(c->drawables[i].name, "Textbox") == 0) {
+      Textbox$setEffect(c->drawables[i].self, c->textboxEffect);
     }
   }
 }
@@ -219,6 +229,11 @@ void Canvas$changeTextboxFont(Canvas* c, bool retroactive) {
       if (strcmp(c->drawables[i].name, "Textbox") == 0) {
         Textbox$setFont(c->drawables[i].self, c->textboxFontIndex);
       }
+    }
+  } else if (c->isActive) {
+    int i = sb_count(c->drawables) - 1;
+    if (strcmp(c->drawables[i].name, "Textbox") == 0) {
+      Textbox$setFont(c->drawables[i].self, c->textboxFontIndex);
     }
   }
 }

@@ -7,6 +7,7 @@
 typedef enum TextEffect {
   TXT_EFFECT_NONE = 0,
   TXT_EFFECT_SHADOW,
+  TXT_EFFECT_SHADOW_LIGHT,
 
   TXT_NUM_EFFECTS,
 } TextEffect;

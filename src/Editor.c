@@ -242,6 +242,8 @@ void drawFontCharToRect(Font font, char codepoint, Rectangle destRec, Color tint
 }
 
 void drawTextWithEffect(Rectangle rect, const char* text, TextEffect effect) {
+  bool invert_colors = effect == TXT_EFFECT_SHADOW_LIGHT;
+
   DrawRectangleRec(rect, BLUE);
 
   Textbox box = {0};
@@ -249,7 +251,7 @@ void drawTextWithEffect(Rectangle rect, const char* text, TextEffect effect) {
 
   box.pos.x = rect.x + 3;
   box.pos.y = rect.y + 2;
-  box.textColor = WHITE;
+  box.textColor = invert_colors ? BLACK : WHITE;
   box.showCursor = false;
   box.effect = effect;
   box.fontSize = 1;

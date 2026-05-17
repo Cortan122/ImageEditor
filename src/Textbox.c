@@ -3,6 +3,7 @@
 #include <math.h>
 #include <raylib.h>
 #include <raymath.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "Drawable.h"
@@ -106,9 +107,19 @@ void Textbox$_drawTextShadow(Textbox* textbox, const char* text, Vector2 pos) {
   pos.y += textbox->fontSize;
 
   Color color = textbox->textColor;
-  color.r >>= 2;
-  color.g >>= 2;
-  color.b >>= 2;
+  Vector3 hsv = ColorToHSV(color);
+  if (hsv.z < 0.7 && textbox->effect == TXT_EFFECT_SHADOW_LIGHT) {
+    color.r = color.r>>3 | 0b11000000;
+    color.g = color.g>>3 | 0b11000000;
+    color.b = color.b>>3 | 0b11000000;
+    color.a = 80;
+    color = ColorAlphaBlend(BLACK, color, WHITE);
+    color.a = 0xff;
+  } else {
+    color.r >>= 2;
+    color.g >>= 2;
+    color.b >>= 2;
+  }
 
   DrawTextScaled(textbox->font, text, pos, textbox->fontSize, color);
 }
@@ -117,6 +128,7 @@ Vector2 Textbox$_drawText(Textbox* textbox, const char* text, Vector2 pos) {
   Vector2 res = {0};
 
   switch (textbox->effect) {
+    case TXT_EFFECT_SHADOW_LIGHT:
     case TXT_EFFECT_SHADOW:
       Textbox$_drawTextShadow(textbox, text, pos);
       /* FALLTHROUGH */
