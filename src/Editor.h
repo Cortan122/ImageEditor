@@ -17,6 +17,7 @@ typedef enum ClickableZoneName {
   ZONE_COLOR_RECT = 0,
   ZONE_LINE_MODE,
   ZONE_TEXT_FONT,
+  ZONE_TEXT_EFFECT,
   ZONE_FILENAME,
 
   ZONE_MAX,

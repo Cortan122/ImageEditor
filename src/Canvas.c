@@ -197,6 +197,18 @@ void Canvas$changeLineMode(Canvas* c, bool retroactive) {
   }
 }
 
+void Canvas$changeTextboxEffect(Canvas* c, bool retroactive) {
+  c->textboxEffect = (c->textboxEffect + 1) % TXT_NUM_EFFECTS;
+
+  if (retroactive) {
+    for (int i = 0; i < sb_count(c->drawables); i++) {
+      if (strcmp(c->drawables[i].name, "Textbox") == 0) {
+        Textbox$setEffect(c->drawables[i].self, c->textboxEffect);
+      }
+    }
+  }
+}
+
 void Canvas$changeTextboxFont(Canvas* c, bool retroactive) {
   int num_fonts = GetFontCount();
   c->textboxFontIndex--;
@@ -257,7 +269,7 @@ void Canvas$Update(Canvas* c) {
   }
   if (!c->isActive) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) Canvas$addDrawable(c, DrawableLine$New(c->lineMode));
-    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) Canvas$addDrawable(c, Textbox$New(c->textboxFontIndex));
+    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) Canvas$addDrawable(c, Textbox$New(c->textboxFontIndex, c->textboxEffect));
     if (IsKeyTyped(KEY_X)) Canvas$addDrawable(c, CropRectangle$New(c));
     if (IsKeyTyped(KEY_B)) Canvas$addDrawable(c, CropRectangle$New(NULL));
 

@@ -4,6 +4,7 @@
 #include "Drawable.h"
 #include "DrawableLine.h"
 #include "Screenshot.h"
+#include "Textbox.h"
 #include "stretchy_buffer.h"
 
 typedef struct Canvas {
@@ -25,6 +26,7 @@ typedef struct Canvas {
   Vector2 marginBottomRight;
 
   LineRenderingMode lineMode;
+  TextEffect textboxEffect;
   int textboxFontIndex;
   Color color;
   Drawable* drawables;  // pointer type: stretchy buffer
@@ -53,3 +55,4 @@ Vector2 Canvas$getMousePosition(Canvas* c);
 Color Canvas$getColorUnderMouse(Canvas* c, bool* is_some);
 void Canvas$changeLineMode(Canvas* c, bool retroactive);
 void Canvas$changeTextboxFont(Canvas* c, bool retroactive);
+void Canvas$changeTextboxEffect(Canvas* c, bool retroactive);

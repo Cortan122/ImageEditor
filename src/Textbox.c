@@ -101,6 +101,36 @@ Vector2 Textbox$partialMeasureText(Textbox* textbox) {
   return res;
 }
 
+void Textbox$_drawTextShadow(Textbox* textbox, const char* text, Vector2 pos) {
+  pos.x += textbox->fontSize;
+  pos.y += textbox->fontSize;
+
+  Color color = textbox->textColor;
+  color.r >>= 2;
+  color.g >>= 2;
+  color.b >>= 2;
+
+  DrawTextScaled(textbox->font, text, pos, textbox->fontSize, color);
+}
+
+Vector2 Textbox$_drawText(Textbox* textbox, const char* text, Vector2 pos) {
+  Vector2 res = {0};
+
+  switch (textbox->effect) {
+    case TXT_EFFECT_SHADOW:
+      Textbox$_drawTextShadow(textbox, text, pos);
+      /* FALLTHROUGH */
+    case TXT_EFFECT_NONE:
+      res = DrawTextScaled(textbox->font, text, pos, textbox->fontSize, textbox->textColor);
+      break;
+
+    case TXT_NUM_EFFECTS:
+      break;
+  }
+
+  return res;
+}
+
 void Textbox$Draw(Textbox* textbox) {
   Vector2 pos = textbox->pos;
   Font font = textbox->font;
@@ -108,7 +138,7 @@ void Textbox$Draw(Textbox* textbox) {
 
   char temp = textbox->text[textbox->cursorPos];
   textbox->text[textbox->cursorPos] = '\0';
-  Vector2 res = DrawTextScaled(font, textbox->text, pos, fontScale, textbox->textColor);
+  Vector2 res = Textbox$_drawText(textbox, textbox->text, pos);
   textbox->text[textbox->cursorPos] = temp;
 
   if (textbox->showCursor) {
@@ -122,7 +152,7 @@ void Textbox$Draw(Textbox* textbox) {
         break;
       }
     }
-    int delta = (fontScale - cursorWidth) / 2;  // тут всё должно делится парвильно
+    int delta = (fontScale - cursorWidth) / 2;  // тут всё должно делится правильно
     res.x += delta;
     DrawRectangleV(res, (Vector2){cursorWidth, font.recs[0].height * fontScale}, textbox->cursorColor);
     res.x += fontScale - delta;
@@ -130,7 +160,7 @@ void Textbox$Draw(Textbox* textbox) {
     res.x += fontScale;
   }
 
-  DrawTextScaled(font, textbox->text + textbox->cursorPos, res, fontScale, textbox->textColor);
+  Textbox$_drawText(textbox, textbox->text + textbox->cursorPos, res);
 }
 
 bool Textbox$Update(Textbox* textbox) {
@@ -201,10 +231,15 @@ void Textbox$setFont(Textbox* textbox, int fontIndex) {
   textbox->font = GetFont(fontIndex);
 }
 
-Drawable Textbox$New(int fontIndex) {
+void Textbox$setEffect(Textbox* textbox, TextEffect effect) {
+  textbox->effect = effect;
+}
+
+Drawable Textbox$New(int fontIndex, TextEffect effect) {
   Textbox* self = calloc(1, sizeof(Textbox));
   Textbox$init(self);
   Textbox$setFont(self, fontIndex);
+  Textbox$setEffect(self, effect);
   return DRAWABLE(self, Textbox);
 }
 

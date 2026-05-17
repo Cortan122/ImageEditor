@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "Canvas.h"
+#include "Textbox.h"
 #include "config.h"
 #include "resource_loader.h"
 
@@ -239,6 +241,24 @@ void drawFontCharToRect(Font font, char codepoint, Rectangle destRec, Color tint
   DrawTexturePro(font.texture, srcRec, destRec, (Vector2){ 0, 0 }, 0.0f, tint);
 }
 
+void drawTextWithEffect(Rectangle rect, const char* text, TextEffect effect) {
+  DrawRectangleRec(rect, BLUE);
+
+  Textbox box = {0};
+  Textbox$init(&box);
+
+  box.pos.x = rect.x + 3;
+  box.pos.y = rect.y + 2;
+  box.textColor = WHITE;
+  box.showCursor = false;
+  box.effect = effect;
+  box.fontSize = 1;
+  Textbox$addText(&box, text);
+
+  Textbox$Draw(&box);
+  Textbox$Delete(&box);
+}
+
 // Note: the returned pointer has a very short lifetime
 const char* getColorHexcode(Color c) {
   return TextFormat("#%02X%02X%02X", c.r, c.g, c.b);
@@ -329,6 +349,10 @@ void Editor$drawUIBars(Editor* ed) {
     Font font = GetFont(ed->canvas.textboxFontIndex);
     Rectangle rect = ed->clickableRects[ZONE_TEXT_FONT];
     drawFontCharToRect(font, 'j', rect, BLACK);
+  }
+  if (Editor$canFitUIBarRect(ed, "style: ", ZONE_TEXT_EFFECT, &cursor, cursorMax)) {
+    Rectangle rect = ed->clickableRects[ZONE_TEXT_EFFECT];
+    drawTextWithEffect(rect, "Tt", ed->canvas.textboxEffect);
   }
 
   // Bottom Bar:
@@ -439,7 +463,10 @@ void Editor$Update(Editor* ed) {
         Canvas$changeLineMode(&ed->canvas, isshift);
         break;
       case ZONE_TEXT_FONT:
-         Canvas$changeTextboxFont(&ed->canvas, isshift);
+        Canvas$changeTextboxFont(&ed->canvas, isshift);
+        break;
+      case ZONE_TEXT_EFFECT:
+        Canvas$changeTextboxEffect(&ed->canvas, isshift);
         break;
       case ZONE_FILENAME:
         Editor$setMode(ed, UIMODE_SAVE_AS);

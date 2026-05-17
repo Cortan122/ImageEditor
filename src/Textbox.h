@@ -4,6 +4,13 @@
 
 #include "Drawable.h"
 
+typedef enum TextEffect {
+  TXT_EFFECT_NONE = 0,
+  TXT_EFFECT_SHADOW,
+
+  TXT_NUM_EFFECTS,
+} TextEffect;
+
 typedef struct Textbox {
   // текст у нас в utf8
   // поэтому важно различать байты и символы
@@ -31,6 +38,7 @@ typedef struct Textbox {
   bool showCursor;  // default value: true
   bool thickCursor; // default value: false
   bool hasJustBeenPasted;
+  TextEffect effect;
 } Textbox;
 
 bool IsKeyTyped(int key);
@@ -49,5 +57,6 @@ void Textbox$Delete(Textbox* textbox);
 void Textbox$Move(Textbox* textbox, Vector2 delta);
 void Textbox$SetColor(Textbox* textbox, Color color);
 void Textbox$setFont(Textbox* textbox, int fontIndex);
-Drawable Textbox$New(int fontIndex);
+void Textbox$setEffect(Textbox* textbox, TextEffect effect);
+Drawable Textbox$New(int fontIndex, TextEffect effect);
 Drawable Textbox$NewFromClipboard();
