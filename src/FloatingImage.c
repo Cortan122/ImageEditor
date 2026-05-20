@@ -8,6 +8,7 @@
 #include "Drawable.h"
 #include "Screenshot.h"
 #include "Textbox.h"
+#include "config.h"
 
 Rectangle FloatingImage$getRect(FloatingImage* fi) {
   return (Rectangle){fi->pos.x, fi->pos.y, fi->texture.width * fi->scale, fi->texture.height * fi->scale};
@@ -62,13 +63,14 @@ bool FloatingImage$InRectangle(FloatingImage* fi, Rectangle rect) {
 }
 
 void FloatingImage$SetColor(FloatingImage* fi, Color color) {
+  if (!ALLOW_SETTING_FRAMED_IMAGE_COLOR) return;
   fi->frameColor = color;
 }
 
 Drawable FloatingImage$New(char* name) {
   FloatingImage* self = calloc(1, sizeof(FloatingImage));
   self->texture = LoadTexture(name);
-  self->frameColor = ORANGE;
+  self->frameColor = DEFAULT_FRAMED_IMAGE_COLOR;
   self->scale = 1;
   return DRAWABLE(self, FloatingImage);
 }
@@ -84,7 +86,7 @@ Drawable FloatingImage$NewFromClipboard() {
   self->texture = LoadTextureFromImage(img);
   UnloadImage(img);
 
-  self->frameColor = ORANGE;
+  self->frameColor = DEFAULT_FRAMED_IMAGE_COLOR;
   self->scale = 1;
   return DRAWABLE(self, FloatingImage);
 }
