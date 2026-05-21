@@ -161,6 +161,7 @@ void Canvas$takeScreenshot(Canvas* c) {
 
 void Canvas$keyboardShortcuts(Canvas* c) {
   bool isctrl = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
+  bool isshift = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
 
   if (IsKeyTyped(KEY_EQUAL) || IsKeyTyped(KEY_KP_ADD)) Canvas$zoom(c, 1);
   if (IsKeyTyped(KEY_MINUS) || IsKeyTyped(KEY_KP_SUBTRACT)) Canvas$zoom(c, -1);
@@ -171,8 +172,11 @@ void Canvas$keyboardShortcuts(Canvas* c) {
   }
 
   if (IsKeyTyped(KEY_L)) Canvas$takeScreenshot(c);
-  if (isctrl && IsKeyTyped(KEY_V)) {
+  if (isctrl && !isshift && IsKeyTyped(KEY_V)) {
     Canvas$addDrawable(c, FloatingImage$NewFromClipboard());
+  }
+  if (isctrl && isshift && IsKeyTyped(KEY_V)) {
+    Canvas$pasteAppendBottom(c);
   }
 
   Vector2 delta = {0};
@@ -224,6 +228,37 @@ bool Canvas$copy(Canvas* c, const char* name) {
     Drawable$Draw(c->drawables + i);
   }
   return Screenshot$end(&c->screenshot, name);
+}
+
+bool Canvas$pasteAppendBottom(Canvas* c) {
+  Image img = getImageFromClipboard();
+  if (img.data == NULL) {
+    return false;
+  }
+
+  Image canvas_img = ImageCopy(c->screenshot.image);
+  if (!(
+    canvas_img.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8 ||
+    canvas_img.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
+  )) {
+    ImageFormat(&canvas_img, PIXELFORMAT_UNCOMPRESSED_R8G8B8);
+  }
+
+  int width = canvas_img.width;
+  int height = canvas_img.height;
+  Rectangle src_rect = {0, 0, img.width, img.height};
+  Rectangle dest_rec = {0, height, img.width, img.height};
+  height += img.height;
+  if (img.width > width) width = img.width;
+
+  ImageResizeCanvas(&canvas_img, width, height, 0, 0, WHITE);
+  ImageDraw(&canvas_img, img, src_rect, dest_rec, WHITE);
+
+  Screenshot$setImage(&c->screenshot, canvas_img);
+  Canvas$reload(c, false);
+  UnloadImage(img);
+
+  return true;
 }
 
 void Canvas$addDrawable(Canvas* c, Drawable d) {

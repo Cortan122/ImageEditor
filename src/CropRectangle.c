@@ -127,8 +127,7 @@ void CropRectangle$crop(CropRectangle* cr) {
 
   // todo: maybe allow extending and fill with WHITE (ImageResizeCanvas)
   Rectangle rec = CropRectangle$getSmall(cr);
-  Canvas* c = cr->parentCanvas;  // we cant use the CropRectangle pointer after
-                                 // self-destructing
+  Canvas* c = cr->parentCanvas;  // we cant use the CropRectangle pointer after self-destructing
 
   Image img = ImageFromImage(c->screenshot.image, rec);
   Screenshot$setImage(&c->screenshot, img);

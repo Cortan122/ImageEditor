@@ -207,7 +207,6 @@ Image getImageFromClipboard() {
     }
   }
 
-
   return res;
 }
 

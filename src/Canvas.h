@@ -51,6 +51,7 @@ void Canvas$Delete(Canvas* c);
 bool Canvas$loadImage(Canvas* c, const char* file);
 void Canvas$SetColor(Canvas* c, Color color);
 
+bool Canvas$pasteAppendBottom(Canvas* c);
 Vector2 Canvas$getMousePosition(Canvas* c);
 Color Canvas$getColorUnderMouse(Canvas* c, bool* is_some);
 void Canvas$changeLineMode(Canvas* c, bool retroactive);
