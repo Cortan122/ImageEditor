@@ -19,6 +19,11 @@
 const float scaleRom[] = {0, 0.12, 0.25, 0.5, 0.75, 1, 2, 4, 8, 0};
 const float movementSpeed = 100;
 
+// polyfull for raylib >=6.0
+void ImageDraw(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint) {
+  ImageDrawImagePro(dst, src, srcRec, dstRec, (Vector2){0}, 0, tint);
+}
+
 void Canvas$recenter(Canvas* c) {
   // todo: maybe there should be an option for free movement
 

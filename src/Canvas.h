@@ -57,3 +57,6 @@ Color Canvas$getColorUnderMouse(Canvas* c, bool* is_some);
 void Canvas$changeLineMode(Canvas* c, bool retroactive);
 void Canvas$changeTextboxFont(Canvas* c, bool retroactive);
 void Canvas$changeTextboxEffect(Canvas* c, bool retroactive);
+
+// polyfull for raylib >=6.0
+void ImageDraw(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Color tint);
