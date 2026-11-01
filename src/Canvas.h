@@ -51,6 +51,7 @@ void Canvas$Delete(Canvas* c);
 bool Canvas$loadImage(Canvas* c, const char* file);
 void Canvas$SetColor(Canvas* c, Color color);
 
+void Canvas$rotate(Canvas* c, bool clockwise);
 bool Canvas$pasteAppendBottom(Canvas* c);
 Vector2 Canvas$getMousePosition(Canvas* c);
 Color Canvas$getColorUnderMouse(Canvas* c, bool* is_some);

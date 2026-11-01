@@ -165,6 +165,8 @@ void Canvas$takeScreenshot(Canvas* c) {
 }
 
 void Canvas$keyboardShortcuts(Canvas* c) {
+  // these keyboard shortcuts only activate when no drawable is active, in order to not compete with the textboxes
+
   bool isctrl = IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL);
   bool isshift = IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT);
 
@@ -192,6 +194,10 @@ void Canvas$keyboardShortcuts(Canvas* c) {
   c->pos.x += -delta.x * movementSpeed;
   c->pos.y += -delta.y * movementSpeed;
   if (delta.x || delta.y) Canvas$recenter(c);
+
+  if (isctrl && IsKeyTyped(KEY_A)) Canvas$rotate(c, false);
+  if (isctrl && IsKeyTyped(KEY_D)) Canvas$rotate(c, true);
+  if (IsKeyTyped(KEY_E)) Canvas$rotate(c, true);
 }
 
 #define RetroactiveUpdate(typename, callback, pram) do { \
@@ -233,6 +239,19 @@ bool Canvas$copy(Canvas* c, const char* name) {
     Drawable$Draw(c->drawables + i);
   }
   return Screenshot$end(&c->screenshot, name);
+}
+
+void Canvas$rotate(Canvas* c, bool clockwise) {
+  Image canvas_img = ImageCopy(c->screenshot.image);
+  if (clockwise) {
+    ImageRotateCW(&canvas_img);
+  } else {
+    ImageRotateCCW(&canvas_img);
+  }
+  Screenshot$setImage(&c->screenshot, canvas_img);
+  Canvas$reload(c, false);
+
+  // todo: ask every drawable to be rotated as well
 }
 
 bool Canvas$pasteAppendBottom(Canvas* c) {
@@ -320,8 +339,10 @@ void Canvas$Update(Canvas* c) {
   if (isctrl && IsKeyTyped(KEY_C)) Canvas$copy(c, NULL);
   if (isctrl && IsKeyTyped(KEY_P)) Canvas$takeScreenshot(c);
   if (IsKeyTyped(KEY_F5)) Canvas$reload(c, true);
-  if (IsKeyTyped(KEY_PAGE_UP)) Canvas$zoom(c, 1);
-  if (IsKeyTyped(KEY_PAGE_DOWN)) Canvas$zoom(c, -1);
+  if (!isctrl && IsKeyTyped(KEY_PAGE_UP)) Canvas$zoom(c, 1);
+  if (!isctrl && IsKeyTyped(KEY_PAGE_DOWN)) Canvas$zoom(c, -1);
+  if (isctrl && IsKeyTyped(KEY_PAGE_UP)) Canvas$rotate(c, false);
+  if (isctrl && IsKeyTyped(KEY_PAGE_DOWN)) Canvas$rotate(c, true);
 
   c->prevMousePos = GetMousePosition();
 }
